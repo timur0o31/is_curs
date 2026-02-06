@@ -1,5 +1,3 @@
-package com.example.is_curs;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
