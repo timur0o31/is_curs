@@ -1,5 +1,4 @@
-package com.example.is_curs;
-
+import com.example.is_curs.IsCursApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
