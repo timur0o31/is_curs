@@ -3,10 +3,12 @@ package com.example.services;
 import lombok.RequiredArgsConstructor;
 import com.example.models.Role;
 import com.example.models.User;
+import com.example.models.Patient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.repositories.UserRepository;
+import com.example.repositories.PatientRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -33,7 +36,16 @@ public class UserService {
                 .locked(false)
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        if (role == Role.PATIENT) {
+            Patient patient = Patient.builder()
+                    .user(savedUser)
+                    .build();
+            patientRepository.save(patient);
+        }
+
+        return savedUser;
     }
 
     public Optional<User> findByEmail(String email) {
@@ -110,4 +122,3 @@ public class UserService {
         return userRepository.save(user);
     }
 }
-

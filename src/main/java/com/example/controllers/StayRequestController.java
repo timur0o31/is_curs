@@ -2,10 +2,15 @@ package com.example.controllers;
 
 import com.example.dto.StayRequestDto;
 import java.util.List;
+
+import com.example.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import com.example.models.RequestStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,23 +40,23 @@ public class StayRequestController {
     }
 
     @GetMapping(params = "status")
-    @PreAuthorize("hasAuthority('stay_request:read')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<StayRequestDto>> getByStatus(@RequestParam RequestStatus status) {
         return ResponseEntity.ok(service.getByStatus(status));
     }
 
     @PostMapping("/check-in")
-    @PreAuthorize("hasAuthority('stay_request:write')")
-    public ResponseEntity<StayRequestDto> createCheckIn(@RequestBody StayRequestDto dto) {
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<StayRequestDto> createCheckIn(Authentication auth,@RequestBody StayRequestDto dto) {
         return ResponseEntity.ok(
-                service.createCheckInRequest(dto.getPatientId(), dto.getAdmissionDate(), dto.getDischargeDate())
+                service.createCheckInRequest(auth.getName(), dto.getAdmissionDate(), dto.getDischargeDate())
         );
     }
     @PostMapping("/expansion")
     @PreAuthorize("hasAuthority('stay_request:write')")
-    public ResponseEntity<StayRequestDto> createExpansion(@RequestBody StayRequestDto dto) {
+    public ResponseEntity<StayRequestDto> createExpansion(Authentication auth,@RequestBody StayRequestDto dto) {
         return ResponseEntity.ok(
-                service.createExpansionRequest(dto.getPatientId(), dto.getAdmissionDate(), dto.getDischargeDate())
+                service.createExpansionRequest(auth.getName(), dto.getAdmissionDate(), dto.getDischargeDate())
         );
     }
     @PostMapping("/{id}/approve")

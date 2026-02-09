@@ -1,4 +1,4 @@
-package com.example.services.stay;
+package com.example.services;
 
 import com.example.dto.StayDto;
 import java.util.List;

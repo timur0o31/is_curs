@@ -2,11 +2,11 @@ package com.example.services;
 
 import com.example.dto.StayRequestDto;
 import java.util.List;
+
+import com.example.models.*;
+import com.example.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import com.example.mapper.StayRequestMapper;
-import com.example.models.RequestStatus;
-import com.example.models.RequestType;
-import com.example.models.StayRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.repositories.StayRequestRepository;
@@ -16,7 +16,8 @@ import com.example.repositories.StayRequestRepository;
 public class StayRequestService {
     private final StayRequestRepository repository;
     private final StayRequestMapper mapper;
-
+    private final UserService userService;
+    private final PatientRepository patientRepository;
     public List<StayRequestDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
     }
@@ -33,9 +34,11 @@ public class StayRequestService {
         return mapper.toDto(repository.save(entity));
     }
 
-    public StayRequestDto createCheckInRequest(Long patientId, java.time.LocalDate admissionDate, java.time.LocalDate dischargeDate) {
+    public StayRequestDto createCheckInRequest(String email, java.time.LocalDate admissionDate, java.time.LocalDate dischargeDate) {
+        User user = userService.findByEmail(email).orElseThrow();
+        Patient patient = patientRepository.findByUser_Id(user.getId()).orElseThrow();
         StayRequest entity = new StayRequest();
-        entity.setPatientId(patientId);
+        entity.setPatient(patient);
         entity.setAdmissionDate(admissionDate);
         entity.setDischargeDate(dischargeDate);
         entity.setStatus(RequestStatus.PENDING);
@@ -43,9 +46,11 @@ public class StayRequestService {
         return mapper.toDto(repository.save(entity));
     }
 
-    public StayRequestDto createExpansionRequest(Long patientId, java.time.LocalDate admissionDate, java.time.LocalDate dischargeDate) {
+    public StayRequestDto createExpansionRequest(String email, java.time.LocalDate admissionDate, java.time.LocalDate dischargeDate) {
+        User user = userService.findByEmail(email).orElseThrow();
+        Patient patient = patientRepository.findByUser_Id(user.getId()).orElseThrow();
         StayRequest entity = new StayRequest();
-        entity.setPatientId(patientId);
+        entity.setPatient(patient);
         entity.setAdmissionDate(admissionDate);
         entity.setDischargeDate(dischargeDate);
         entity.setStatus(RequestStatus.PENDING);

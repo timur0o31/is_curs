@@ -1,14 +1,7 @@
 package com.example.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -27,8 +20,9 @@ public class StayRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "patient_id", nullable = false)
-    private Long patientId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
