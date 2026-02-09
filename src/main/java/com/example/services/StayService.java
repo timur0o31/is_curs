@@ -1,6 +1,8 @@
 package com.example.services;
 
 import com.example.dto.StayDto;
+
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import com.example.mapper.StayMapper;
@@ -46,5 +48,11 @@ public class StayService {
 
     public List<StayDto> getByRoomId(Long roomId) {
         return repository.findByRoom_Id(roomId).stream().map(mapper::toDto).toList();
+    }
+    public Long discharge(Long stayId, LocalDate dischargeDate) {
+        if (dischargeDate == null) {
+            return repository.dischargeStay(stayId);
+        }
+        return repository.dischargeStayEarly(stayId, dischargeDate);
     }
 }

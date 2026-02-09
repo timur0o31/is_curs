@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface StayRequestRepository extends JpaRepository<StayRequest, Long> {
-    List<StayRequest> findByPatientId(Long patientId);
+    List<StayRequest> findByPatient_Id(Long patientId);
 
     List<StayRequest> findByStatus(RequestStatus status);
 

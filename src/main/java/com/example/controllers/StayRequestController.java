@@ -65,6 +65,12 @@ public class StayRequestController {
         return ResponseEntity.ok(service.approveRequest(id, roomId, doctorId));
     }
 
+    @PostMapping("/{id}/approve-expansion")
+    @PreAuthorize("hasAuthority('stay_request:approve')")
+    public ResponseEntity<StayRequestDto> approveExpansion(@PathVariable Long id) {
+        return ResponseEntity.ok(service.approveExpansion(id));
+    }
+
     @PostMapping("/{id}/reject")
     @PreAuthorize("hasAuthority('stay_request:approve')")
     public ResponseEntity<Void> reject(@PathVariable Long id) {

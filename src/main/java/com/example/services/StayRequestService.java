@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.models.*;
 import com.example.repositories.PatientRepository;
+import com.example.repositories.StayRepository;
 import lombok.RequiredArgsConstructor;
 import com.example.mapper.StayRequestMapper;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class StayRequestService {
     private final StayRequestMapper mapper;
     private final UserService userService;
     private final PatientRepository patientRepository;
+    private final StayRepository stayRepository;
     public List<StayRequestDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
     }
@@ -69,7 +71,7 @@ public class StayRequestService {
     }
 
     public List<StayRequestDto> getByPatientId(Long patientId) {
-        return repository.findByPatientId(patientId).stream().map(mapper::toDto).toList();
+        return repository.findByPatient_Id(patientId).stream().map(mapper::toDto).toList();
     }
 
     public List<StayRequestDto> getByStatus(RequestStatus status) {
@@ -80,6 +82,30 @@ public class StayRequestService {
         return repository.approveStayRequest(requestId, roomId, doctorId);
     }
 
+    @Transactional
+    public StayRequestDto approveExpansion(Long requestId) {
+        StayRequest expansion = repository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("StayRequest not found: " + requestId));
+        if (expansion.getType() != RequestType.EXPANSION) {
+            throw new IllegalArgumentException("StayRequest is not an expansion: " + requestId);
+        }
+        if (expansion.getStatus() != RequestStatus.PENDING) {
+            throw new IllegalStateException("StayRequest is not pending: " + requestId);
+        }
+
+        Long patientId = expansion.getPatient().getId();
+        Stay stay = stayRepository
+                .findFirstByStayRequest_Patient_IdAndStayRequest_TypeAndStayRequest_StatusOrderByIdDesc(
+                        patientId, RequestType.CHECK_IN, RequestStatus.APPROVED)
+                .orElseThrow(() -> new IllegalStateException("Active stay not found for patient: " + patientId));
+
+        StayRequest firstStayRequest = stay.getStayRequest();
+        firstStayRequest.setDischargeDate(expansion.getDischargeDate());
+        expansion.setStatus(RequestStatus.APPROVED);
+
+        repository.save(firstStayRequest);
+        return mapper.toDto(repository.save(expansion));
+    }
     @Transactional
     public void rejectRequest(Long requestId) {
         int updated = repository.rejectStayRequest(requestId);

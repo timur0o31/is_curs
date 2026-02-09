@@ -77,3 +77,68 @@ CREATE TRIGGER trg_stay_room_occupancy
     BEFORE INSERT ON stay
     FOR EACH ROW
     EXECUTE FUNCTION update_room_occupancy();
+
+CREATE OR REPLACE FUNCTION discharge_stay(p_stay_id bigint)
+RETURNS bigint AS $$
+DECLARE
+v_room_id bigint;
+  v_patient_id bigint;
+BEGIN
+SELECT s.room_id, sr.patient_id
+INTO v_room_id, v_patient_id
+FROM stay s
+         JOIN stay_request sr ON sr.id = s.stay_request_id
+WHERE s.id = p_stay_id
+    FOR UPDATE;
+
+IF NOT FOUND THEN
+    RAISE EXCEPTION 'Stay % не найден', p_stay_id;
+END IF;
+
+UPDATE room
+SET is_occupied = false
+WHERE id = v_room_id;
+
+UPDATE locker
+SET patient_id = NULL
+WHERE patient_id = v_patient_id;
+
+RETURN v_patient_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION discharge_stay_early(p_stay_id bigint, p_discharge_date date)
+RETURNS bigint AS $$
+DECLARE
+v_stay_request_id bigint;
+  v_admission_date date;
+  v_current_discharge date;
+BEGIN
+SELECT s.stay_request_id, sr.admission_date, sr.discharge_date
+INTO v_stay_request_id, v_admission_date, v_current_discharge
+FROM stay s
+         JOIN stay_request sr ON sr.id = s.stay_request_id
+WHERE s.id = p_stay_id
+    FOR UPDATE;
+
+IF NOT FOUND THEN
+    RAISE EXCEPTION 'Stay % not found', p_stay_id;
+END IF;
+
+  IF p_discharge_date < v_admission_date THEN
+    RAISE EXCEPTION 'Discharge date before admission date';
+END IF;
+
+  IF p_discharge_date > v_current_discharge THEN
+    RAISE EXCEPTION 'Discharge date after current discharge date';
+END IF;
+
+UPDATE stay_request
+SET discharge_date = p_discharge_date
+WHERE id = v_stay_request_id;
+
+RETURN discharge_stay(p_stay_id);
+END;
+$$ LANGUAGE plpgsql;
