@@ -1,11 +1,13 @@
 package com.example.services;
 
 import com.example.dto.MedicalCardDto;
-import lombok.RequiredArgsConstructor;
 import com.example.mapper.MedicalCardMapper;
+import com.example.models.Diet;
 import com.example.models.MedicalCard;
-import org.springframework.stereotype.Service;
 import com.example.repositories.MedicalCardRepository;
+import com.example.services.SeatService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import java.util.List;
 public class MedicalCardService {
     private final MedicalCardRepository repository;
     private final MedicalCardMapper mapper;
+    private final SeatService seatService;
 
     public List<MedicalCardDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
@@ -45,5 +48,20 @@ public class MedicalCardService {
         MedicalCard entity = repository.findByPatientId(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("MedicalCard not found for patient: " + patientId));
         return mapper.toDto(entity);
+    }
+
+    /**
+     * Обновляет диету пациента и переопределяет рассадку в столовой в соответствии с новой диетой.
+     */
+    public MedicalCardDto updateDietAndAssignSeat(Long patientId, Diet newDiet) {
+        MedicalCard entity = repository.findByPatientId(patientId)
+                .orElseThrow(() -> new IllegalArgumentException("MedicalCard not found for patient: " + patientId));
+        entity.setDiet(newDiet);
+        MedicalCard saved = repository.save(entity);
+
+        // Учитываем диету при рассадке
+        seatService.assignSeatForPatientByDiet(patientId, newDiet);
+
+        return mapper.toDto(saved);
     }
 }

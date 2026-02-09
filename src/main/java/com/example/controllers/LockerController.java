@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import com.example.dto.LockerDto;
+import com.example.services.LockerService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.services.LockerService;
 
 @RestController
 @RequestMapping("/api/lockers")
@@ -52,5 +53,25 @@ public class LockerController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    /**
+     * Пользователь выбирает и закрепляет за собой шкафчик.
+     * patientId можно будет получить из текущего пользователя, но здесь
+     * передаём явно, чтобы было проще интегрировать.
+     */
+    @PostMapping("/{lockerId}/assign")
+    public LockerDto assignLocker(
+            @PathVariable Long lockerId,
+            @RequestParam Long patientId) {
+        return service.assignLockerToPatient(lockerId, patientId);
+    }
+
+    /**
+     * Пользователь открепляется от шкафчика.
+     */
+    @PostMapping("/unassign")
+    public void unassignLocker(@RequestParam Long patientId) {
+        service.unassignLockerFromPatient(patientId);
     }
 }

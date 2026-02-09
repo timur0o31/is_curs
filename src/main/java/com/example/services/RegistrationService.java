@@ -28,6 +28,21 @@ public class RegistrationService {
 
     public RegistrationDto create(RegistrationDto dto) {
         Registration entity = mapper.toEntity(dto);
+
+        // UC-8 / UC-9: проверка, что пациент не записан на тот же сеанс дважды
+        if (entity.getStay() != null && entity.getSession() != null) {
+            RegistrationId id = new RegistrationId(
+                    entity.getStay().getId(),
+                    entity.getSession().getId()
+            );
+            if (repository.existsById(id)) {
+                throw new IllegalArgumentException(
+                        "Пациент уже записан на данный сеанс: stayId="
+                                + id.getStayId() + ", sessionId=" + id.getSessionId()
+                );
+            }
+        }
+
         return mapper.toDto(repository.save(entity));
     }
 
