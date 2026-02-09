@@ -1,6 +1,6 @@
-package com.example.controllers.stay;
+package com.example.controllers;
 
-import com.example.dto.stay.StayDto;
+import com.example.dto.StayDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;

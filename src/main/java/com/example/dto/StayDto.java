@@ -1,4 +1,4 @@
-package com.example.dto.stay;
+package com.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

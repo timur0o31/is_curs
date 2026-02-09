@@ -1,6 +1,6 @@
-package com.example.mapper.stay;
+package com.example.mapper;
 
-import com.example.dto.stay.StayDto;
+import com.example.dto.StayDto;
 import com.example.models.Room;
 import com.example.models.Stay;
 import com.example.models.StayRequest;

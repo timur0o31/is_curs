@@ -1,9 +1,9 @@
-package com.example.services.stay;
+package com.example.services;
 
-import com.example.dto.stay.StayRequestDto;
+import com.example.dto.StayRequestDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import com.example.mapper.stay.StayRequestMapper;
+import com.example.mapper.StayRequestMapper;
 import com.example.models.RequestStatus;
 import com.example.models.RequestType;
 import com.example.models.StayRequest;
