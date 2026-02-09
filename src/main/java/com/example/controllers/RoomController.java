@@ -3,6 +3,7 @@ package com.example.controllers;
 import com.example.dto.RoomDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,36 +22,43 @@ public class RoomController {
     private final RoomService service;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<RoomDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/available")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<RoomDto> getAvailable() {
         return service.getAvailableRooms();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomDto getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomDto create(@RequestBody RoomDto dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomDto update(@PathVariable Long id, @RequestBody RoomDto dto) {
         return service.update(id, dto);
     }
 
     @PutMapping("/{id}/occupancy")
+    @PreAuthorize("hasRole('ADMIN')")
     public RoomDto updateOccupancy(@PathVariable Long id, @RequestParam Boolean isOccupied) {
         return service.updateOccupancy(id, isOccupied);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

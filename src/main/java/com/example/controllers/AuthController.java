@@ -1,11 +1,12 @@
 package com.example.controllers;
 
 import lombok.RequiredArgsConstructor;
-import com.example.models.Role;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.example.services.AuthService;
 import com.example.services.UserService;
+import com.example.models.Role;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,11 +24,15 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        if (request.role != null && !request.role.equalsIgnoreCase("PATIENT")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Регистрация доступна только для PATIENT");
+        }
         userService.createUser(
                 request.email,
                 request.password,
                 request.name,
-                Role.valueOf(request.role.toUpperCase())
+                Role.PATIENT
         );
         return ResponseEntity.ok("Пользователь успешно зарегистрирован");
     }
@@ -36,4 +41,3 @@ public class AuthController {
 
     public record RegisterRequest(String email, String password, String name, String role) {}
 }
-

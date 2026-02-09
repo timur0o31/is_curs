@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import lombok.RequiredArgsConstructor;
+import com.example.models.Role;
 import com.example.models.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +21,20 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @PostMapping("/doctors")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> createDoctor(@RequestBody CreateUserRequest request) {
+        userService.createUser(request.email, request.password, request.name, Role.DOCTOR);
+        return ResponseEntity.ok("Врач создан");
+    }
+
+    @PostMapping("/admins")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> createAdmin(@RequestBody CreateUserRequest request) {
+        userService.createUser(request.email, request.password, request.name, Role.ADMIN);
+        return ResponseEntity.ok("Администратор создан");
     }
 
     @GetMapping("/users/{id}")
@@ -69,5 +84,6 @@ public class AdminController {
     }
 
     public record UpdateUserRequest(String name, String email) {}
-}
 
+    public record CreateUserRequest(String email, String password, String name) {}
+}

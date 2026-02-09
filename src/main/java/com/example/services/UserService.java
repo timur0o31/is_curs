@@ -3,10 +3,14 @@ package com.example.services;
 import lombok.RequiredArgsConstructor;
 import com.example.models.Role;
 import com.example.models.User;
+import com.example.models.Admin;
+import com.example.models.Doctor;
 import com.example.models.Patient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.repositories.AdminRepository;
+import com.example.repositories.DoctorRepository;
 import com.example.repositories.UserRepository;
 import com.example.repositories.PatientRepository;
 
@@ -19,6 +23,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
+    private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -43,8 +49,17 @@ public class UserService {
                     .user(savedUser)
                     .build();
             patientRepository.save(patient);
+        } else if (role == Role.DOCTOR) {
+            Doctor doctor = Doctor.builder()
+                    .user(savedUser)
+                    .build();
+            doctorRepository.save(doctor);
+        } else if (role == Role.ADMIN) {
+            Admin admin = Admin.builder()
+                    .user(savedUser)
+                    .build();
+            adminRepository.save(admin);
         }
-
         return savedUser;
     }
 
