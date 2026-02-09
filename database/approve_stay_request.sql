@@ -53,3 +53,27 @@ VALUES (p_request_id, p_room_id, p_doctor_id)
 RETURN v_stay_id;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_room_occupancy()
+RETURNS trigger AS $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM room
+    WHERE id = NEW.room_id AND is_occupied = TRUE
+  ) THEN
+    RAISE EXCEPTION 'Комната % уже занята', NEW.room_id;
+END IF;
+
+UPDATE room
+SET is_occupied = TRUE
+WHERE id = NEW.room_id;
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_stay_room_occupancy ON stay;
+CREATE TRIGGER trg_stay_room_occupancy
+    BEFORE INSERT ON stay
+    FOR EACH ROW
+    EXECUTE FUNCTION update_room_occupancy();
