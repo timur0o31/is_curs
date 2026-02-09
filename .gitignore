@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local docs (ER, TZ, etc.)
+docs/private/
+
+# Local Spring profile
+application-local.properties
