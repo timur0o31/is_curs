@@ -15,6 +15,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import model.RequestStatus;
+import model.RequestType;
 
 @Entity
 @Table(name = "Stay_request")

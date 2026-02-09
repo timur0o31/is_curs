@@ -1,12 +1,12 @@
-package service;
+package service.stay;
 
-import dto.StayDto;
+import dto.stay.StayDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.StayMapper;
+import mapper.stay.StayMapper;
 import model.Stay;
 import org.springframework.stereotype.Service;
-import repository.StayRepository;
+import repository.stay.StayRepository;
 
 @Service
 @RequiredArgsConstructor

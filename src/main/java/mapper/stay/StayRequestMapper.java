@@ -1,6 +1,6 @@
-package mapper;
+package mapper.stay;
 
-import dto.StayRequestDto;
+import dto.stay.StayRequestDto;
 import model.StayRequest;
 import org.mapstruct.Mapper;
 

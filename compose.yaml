@@ -1,12 +1,12 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16-alpine
     environment:
       POSTGRES_DB: is_curs
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - is_curs_pgdata:/var/lib/postgresql/data
 

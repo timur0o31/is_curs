@@ -1,4 +1,4 @@
-package dto;
+package dto.stay;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

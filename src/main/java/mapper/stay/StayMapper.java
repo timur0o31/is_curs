@@ -1,6 +1,6 @@
-package mapper;
+package mapper.stay;
 
-import dto.StayDto;
+import dto.stay.StayDto;
 import model.Room;
 import model.Stay;
 import model.StayRequest;

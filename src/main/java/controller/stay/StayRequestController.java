@@ -1,6 +1,7 @@
-package controller;
+package controller.stay;
 
-import dto.StayRequestDto;
+import dto.stay.StayRequestCreateDto;
+import dto.stay.StayRequestDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import model.RequestStatus;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.StayRequestService;
+import service.stay.StayRequestService;
 
 @RestController
 @RequestMapping("/api/stay-requests")
@@ -46,6 +47,16 @@ public class StayRequestController {
         return service.create(dto);
     }
 
+    @PostMapping("/check-in")
+    public StayRequestDto createCheckIn(@RequestBody StayRequestCreateDto dto) {
+        return service.createCheckInRequest(dto.getPatientId(), dto.getAdmissionDate(), dto.getDischargeDate());
+    }
+
+    @PostMapping("/expansion")
+    public StayRequestDto createExpansion(@RequestBody StayRequestCreateDto dto) {
+        return service.createExpansionRequest(dto.getPatientId(), dto.getAdmissionDate(), dto.getDischargeDate());
+    }
+
     @PutMapping("/{id}")
     public StayRequestDto update(@PathVariable Long id, @RequestBody StayRequestDto dto) {
         return service.update(id, dto);
@@ -54,5 +65,15 @@ public class StayRequestController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @PostMapping("/{id}/approve")
+    public Long approve(@PathVariable Long id, @RequestParam Long roomId, @RequestParam(required = false) Long doctorId) {
+        return service.approveRequest(id, roomId, doctorId);
+    }
+
+    @PostMapping("/{id}/reject")
+    public void reject(@PathVariable Long id) {
+        service.rejectRequest(id);
     }
 }

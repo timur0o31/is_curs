@@ -1,4 +1,4 @@
-package repository;
+package repository.stay;
 
 import java.util.List;
 import model.Stay;

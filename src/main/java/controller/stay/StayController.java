@@ -1,6 +1,6 @@
-package controller;
+package controller.stay;
 
-import dto.StayDto;
+import dto.stay.StayDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.StayService;
+import service.stay.StayService;
 
 @RestController
 @RequestMapping("/api/stays")
 @RequiredArgsConstructor
 public class StayController {
+
     private final StayService service;
 
     @GetMapping
