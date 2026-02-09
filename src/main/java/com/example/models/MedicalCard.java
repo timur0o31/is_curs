@@ -28,15 +28,15 @@ public class MedicalCard {
     private Long patientId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     private Diet diet;
 
-    @Column(name = "phone_number", nullable = false, length = 12)
+    @Column(name = "phone_number", length = 12)
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column
     private Integer height;
 
-    @Column(nullable = false)
+    @Column
     private Integer weight;
 }

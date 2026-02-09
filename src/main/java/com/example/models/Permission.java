@@ -45,7 +45,11 @@ public enum Permission {
 
     // Locker permissions
     LOCKER_READ("locker:read"),
-    LOCKER_WRITE("locker:write");
+    LOCKER_WRITE("locker:write"),
+
+    // Diary entry permissions
+    DIARY_ENTRY_READ("diary_entry:read"),
+    DIARY_ENTRY_WRITE("diary_entry:write");
 
     private final String permission;
 }

@@ -24,15 +24,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        if (request.role != null && !request.role.equalsIgnoreCase("PATIENT")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Регистрация доступна только для PATIENT");
-        }
         userService.createUser(
                 request.email,
                 request.password,
                 request.name,
-                Role.PATIENT
+                Role.valueOf(request.role.toUpperCase())
         );
         return ResponseEntity.ok("Пользователь успешно зарегистрирован");
     }
