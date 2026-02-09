@@ -1,7 +1,7 @@
-package repository;
+package com.example.repositories;
 
 import java.util.List;
-import model.Medicament;
+import com.example.models.Medicament;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MedicamentRepository extends JpaRepository<Medicament, Long> {

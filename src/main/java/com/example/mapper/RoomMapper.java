@@ -1,7 +1,7 @@
-package mapper;
+package com.example.mapper;
 
-import dto.RoomDto;
-import model.Room;
+import com.example.dto.RoomDto;
+import com.example.models.Room;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

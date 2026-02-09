@@ -1,4 +1,4 @@
-package dto.stay;
+package com.example.dto.stay;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import model.RequestStatus;
-import model.RequestType;
+import com.example.models.RequestStatus;
+import com.example.models.RequestType;
 
 @Getter
 @Setter

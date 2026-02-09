@@ -1,8 +1,8 @@
-package repository.stay;
+package com.example.repositories;
 
 import java.util.List;
-import model.RequestStatus;
-import model.StayRequest;
+import com.example.models.RequestStatus;
+import com.example.models.StayRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

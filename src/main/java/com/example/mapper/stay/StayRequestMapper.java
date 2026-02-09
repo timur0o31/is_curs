@@ -1,7 +1,7 @@
-package mapper.stay;
+package com.example.mapper.stay;
 
-import dto.stay.StayRequestDto;
-import model.StayRequest;
+import com.example.dto.stay.StayRequestDto;
+import com.example.models.StayRequest;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

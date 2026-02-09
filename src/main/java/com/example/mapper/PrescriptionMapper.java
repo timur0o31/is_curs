@@ -1,9 +1,9 @@
-package mapper;
+package com.example.mapper;
 
-import dto.PrescriptionDto;
-import model.MedicalCard;
-import model.Medicament;
-import model.Prescription;
+import com.example.dto.PrescriptionDto;
+import com.example.models.MedicalCard;
+import com.example.models.Medicament;
+import com.example.models.Prescription;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

@@ -1,6 +1,6 @@
-package controller;
+package com.example.controllers;
 
-import dto.RoomDto;
+import com.example.dto.RoomDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.RoomService;
+import com.example.services.RoomService;
 
 @RestController
 @RequestMapping("/api/rooms")

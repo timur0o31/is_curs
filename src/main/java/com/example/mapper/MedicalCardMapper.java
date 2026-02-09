@@ -1,7 +1,7 @@
-package mapper;
+package com.example.mapper;
 
-import dto.MedicalCardDto;
-import model.MedicalCard;
+import com.example.dto.MedicalCardDto;
+import com.example.models.MedicalCard;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

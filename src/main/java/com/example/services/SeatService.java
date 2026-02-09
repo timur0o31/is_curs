@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.SeatDto;
+import com.example.dto.SeatDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.SeatMapper;
-import model.Seat;
+import com.example.mapper.SeatMapper;
+import com.example.models.Seat;
 import org.springframework.stereotype.Service;
-import repository.SeatRepository;
+import com.example.repositories.SeatRepository;
 
 @Service
 @RequiredArgsConstructor

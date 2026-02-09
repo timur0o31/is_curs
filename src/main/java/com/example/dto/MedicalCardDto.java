@@ -1,10 +1,10 @@
-package dto;
+package com.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import model.Diet;
+import com.example.models.Diet;
 
 @Getter
 @Setter

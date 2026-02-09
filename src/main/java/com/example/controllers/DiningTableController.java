@@ -1,9 +1,9 @@
-package controller;
+package com.example.controllers;
 
-import dto.DiningTableDto;
+import com.example.dto.DiningTableDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import model.Diet;
+import com.example.models.Diet;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.DiningTableService;
+import com.example.services.DiningTableService;
 
 @RestController
 @RequestMapping("/api/dining-tables")

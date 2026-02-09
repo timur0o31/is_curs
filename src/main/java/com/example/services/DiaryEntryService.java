@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.DiaryEntryDto;
+import com.example.dto.DiaryEntryDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.DiaryEntryMapper;
-import model.DiaryEntry;
+import com.example.mapper.DiaryEntryMapper;
+import com.example.models.DiaryEntry;
 import org.springframework.stereotype.Service;
-import repository.DiaryEntryRepository;
+import com.example.repositories.DiaryEntryRepository;
 
 @Service
 @RequiredArgsConstructor

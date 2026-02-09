@@ -1,11 +1,11 @@
-package service;
+package com.example.services;
 
-import dto.MedicalCardDto;
+import com.example.dto.MedicalCardDto;
 import lombok.RequiredArgsConstructor;
-import mapper.MedicalCardMapper;
-import model.MedicalCard;
+import com.example.mapper.MedicalCardMapper;
+import com.example.models.MedicalCard;
 import org.springframework.stereotype.Service;
-import repository.MedicalCardRepository;
+import com.example.repositories.MedicalCardRepository;
 
 import java.util.List;
 

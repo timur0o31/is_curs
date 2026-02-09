@@ -1,9 +1,9 @@
-package mapper;
+package com.example.mapper;
 
-import dto.RegistrationDto;
-import model.Registration;
-import model.Session;
-import model.Stay;
+import com.example.dto.RegistrationDto;
+import com.example.models.Registration;
+import com.example.models.Session;
+import com.example.models.Stay;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

@@ -1,9 +1,9 @@
-package mapper.stay;
+package com.example.mapper.stay;
 
-import dto.stay.StayDto;
-import model.Room;
-import model.Stay;
-import model.StayRequest;
+import com.example.dto.stay.StayDto;
+import com.example.models.Room;
+import com.example.models.Stay;
+import com.example.models.StayRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

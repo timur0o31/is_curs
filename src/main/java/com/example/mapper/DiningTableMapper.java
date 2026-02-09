@@ -1,7 +1,7 @@
-package mapper;
+package com.example.mapper;
 
-import dto.DiningTableDto;
-import model.DiningTable;
+import com.example.dto.DiningTableDto;
+import com.example.models.DiningTable;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

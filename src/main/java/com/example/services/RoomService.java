@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.RoomDto;
+import com.example.dto.RoomDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.RoomMapper;
-import model.Room;
+import com.example.mapper.RoomMapper;
+import com.example.models.Room;
 import org.springframework.stereotype.Service;
-import repository.RoomRepository;
+import com.example.repositories.RoomRepository;
 
 @Service
 @RequiredArgsConstructor

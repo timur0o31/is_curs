@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.ProcedureDto;
+import com.example.dto.ProcedureDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.ProcedureMapper;
-import model.Procedure;
+import com.example.mapper.ProcedureMapper;
+import com.example.models.Procedure;
 import org.springframework.stereotype.Service;
-import repository.ProcedureRepository;
+import com.example.repositories.ProcedureRepository;
 
 @Service
 @RequiredArgsConstructor

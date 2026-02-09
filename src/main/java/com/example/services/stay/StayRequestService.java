@@ -1,15 +1,15 @@
-package service.stay;
+package com.example.services.stay;
 
-import dto.stay.StayRequestDto;
+import com.example.dto.stay.StayRequestDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.stay.StayRequestMapper;
-import model.RequestStatus;
-import model.RequestType;
-import model.StayRequest;
+import com.example.mapper.stay.StayRequestMapper;
+import com.example.models.RequestStatus;
+import com.example.models.RequestType;
+import com.example.models.StayRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import repository.stay.StayRequestRepository;
+import com.example.repositories.StayRequestRepository;
 
 @Service
 @RequiredArgsConstructor

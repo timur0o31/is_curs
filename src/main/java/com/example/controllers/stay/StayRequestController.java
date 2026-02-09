@@ -1,10 +1,10 @@
-package controller.stay;
+package com.example.controllers.stay;
 
-import dto.stay.StayRequestCreateDto;
-import dto.stay.StayRequestDto;
+import com.example.dto.stay.StayRequestCreateDto;
+import com.example.dto.stay.StayRequestDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import model.RequestStatus;
+import com.example.models.RequestStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.stay.StayRequestService;
+import com.example.services.stay.StayRequestService;
 
 @RestController
 @RequestMapping("/api/stay-requests")

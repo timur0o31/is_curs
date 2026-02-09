@@ -1,8 +1,8 @@
-package mapper;
+package com.example.mapper;
 
-import dto.DiaryEntryDto;
-import model.DiaryEntry;
-import model.MedicalCard;
+import com.example.dto.DiaryEntryDto;
+import com.example.models.DiaryEntry;
+import com.example.models.MedicalCard;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

@@ -1,13 +1,13 @@
-package service;
+package com.example.services;
 
-import dto.RegistrationDto;
+import com.example.dto.RegistrationDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.RegistrationMapper;
-import model.Registration;
-import model.Registration.RegistrationId;
+import com.example.mapper.RegistrationMapper;
+import com.example.models.Registration;
+import com.example.models.Registration.RegistrationId;
 import org.springframework.stereotype.Service;
-import repository.RegistrationRepository;
+import com.example.repositories.RegistrationRepository;
 
 @Service
 @RequiredArgsConstructor

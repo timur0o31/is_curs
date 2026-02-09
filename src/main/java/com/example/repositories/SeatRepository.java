@@ -1,7 +1,7 @@
-package repository;
+package com.example.repositories;
 
 import java.util.List;
-import model.Seat;
+import com.example.models.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {

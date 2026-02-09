@@ -1,8 +1,8 @@
-package mapper;
+package com.example.mapper;
 
-import dto.SeatDto;
-import model.DiningTable;
-import model.Seat;
+import com.example.dto.SeatDto;
+import com.example.models.DiningTable;
+import com.example.models.Seat;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

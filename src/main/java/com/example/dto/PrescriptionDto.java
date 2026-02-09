@@ -1,4 +1,4 @@
-package dto;
+package com.example.dto;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;

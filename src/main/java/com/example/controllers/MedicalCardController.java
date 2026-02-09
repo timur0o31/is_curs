@@ -1,6 +1,6 @@
-package controller;
+package com.example.controllers;
 
-import dto.MedicalCardDto;
+import com.example.dto.MedicalCardDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.MedicalCardService;
+import com.example.services.MedicalCardService;
 
 @RestController
 @RequestMapping("/api/medical-cards")

@@ -1,7 +1,7 @@
-package repository;
+package com.example.repositories;
 
 import java.util.Optional;
-import model.MedicalCard;
+import com.example.models.MedicalCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MedicalCardRepository extends JpaRepository<MedicalCard, Long> {

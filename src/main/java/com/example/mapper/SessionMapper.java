@@ -1,8 +1,8 @@
-package mapper;
+package com.example.mapper;
 
-import dto.SessionDto;
-import model.Procedure;
-import model.Session;
+import com.example.dto.SessionDto;
+import com.example.models.Procedure;
+import com.example.models.Session;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

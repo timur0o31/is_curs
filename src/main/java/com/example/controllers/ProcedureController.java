@@ -1,6 +1,6 @@
-package controller;
+package com.example.controllers;
 
-import dto.ProcedureDto;
+import com.example.dto.ProcedureDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import service.ProcedureService;
+import com.example.services.ProcedureService;
 
 @RestController
 @RequestMapping("/api/procedures")

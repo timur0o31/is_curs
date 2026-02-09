@@ -1,4 +1,4 @@
-package model;
+package com.example.models;
 
 public enum Diet {
     DIET_1,

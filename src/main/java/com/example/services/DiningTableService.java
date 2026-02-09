@@ -1,13 +1,13 @@
-package service;
+package com.example.services;
 
-import dto.DiningTableDto;
+import com.example.dto.DiningTableDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.DiningTableMapper;
-import model.Diet;
-import model.DiningTable;
+import com.example.mapper.DiningTableMapper;
+import com.example.models.Diet;
+import com.example.models.DiningTable;
 import org.springframework.stereotype.Service;
-import repository.DiningTableRepository;
+import com.example.repositories.DiningTableRepository;
 
 @Service
 @RequiredArgsConstructor

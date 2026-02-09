@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.LockerDto;
+import com.example.dto.LockerDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.LockerMapper;
-import model.Locker;
+import com.example.mapper.LockerMapper;
+import com.example.models.Locker;
 import org.springframework.stereotype.Service;
-import repository.LockerRepository;
+import com.example.repositories.LockerRepository;
 
 @Service
 @RequiredArgsConstructor

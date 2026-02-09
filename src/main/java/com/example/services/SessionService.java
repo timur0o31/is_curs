@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.SessionDto;
+import com.example.dto.SessionDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.SessionMapper;
-import model.Session;
+import com.example.mapper.SessionMapper;
+import com.example.models.Session;
 import org.springframework.stereotype.Service;
-import repository.SessionRepository;
+import com.example.repositories.SessionRepository;
 
 @Service
 @RequiredArgsConstructor

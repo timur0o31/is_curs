@@ -1,4 +1,4 @@
-package dto.stay;
+package com.example.dto.stay;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;

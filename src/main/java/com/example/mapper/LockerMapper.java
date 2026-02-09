@@ -1,7 +1,7 @@
-package mapper;
+package com.example.mapper;
 
-import dto.LockerDto;
-import model.Locker;
+import com.example.dto.LockerDto;
+import com.example.models.Locker;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

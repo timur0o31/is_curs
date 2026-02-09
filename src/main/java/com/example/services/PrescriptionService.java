@@ -1,12 +1,12 @@
-package service;
+package com.example.services;
 
-import dto.PrescriptionDto;
+import com.example.dto.PrescriptionDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import mapper.PrescriptionMapper;
-import model.Prescription;
+import com.example.mapper.PrescriptionMapper;
+import com.example.models.Prescription;
 import org.springframework.stereotype.Service;
-import repository.PrescriptionRepository;
+import com.example.repositories.PrescriptionRepository;
 
 @Service
 @RequiredArgsConstructor
