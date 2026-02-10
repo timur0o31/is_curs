@@ -78,6 +78,24 @@ public class RegistrationService {
         return create(dto);
     }
 
+    public void deleteOptionalForPatient(String email, Long sessionId) {
+        if (sessionId == null) {
+            throw new IllegalArgumentException("sessionId is required");
+        }
+        Stay stay = findActiveStayByEmail(email);
+        if (stay == null) {
+            throw new IllegalArgumentException("Активное проживание не найдено");
+        }
+        RegistrationId id = new RegistrationId(stay.getId(), sessionId);
+        Registration entity = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Registration not found: " + id.getStayId() + "/" + id.getSessionId()));
+        if (Boolean.TRUE.equals(entity.getIsNecessary())) {
+            throw new IllegalArgumentException("Нельзя отменить обязательную процедуру");
+        }
+        repository.deleteById(id);
+    }
+
     public RegistrationDto createMandatoryForDoctor(String email, RegistrationDto dto) {
         dto.setIsNecessary(true);
 

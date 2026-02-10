@@ -67,6 +67,13 @@ public class RegistrationController {
         return ResponseEntity.ok(RegService.createOptionalForPatient(auth.getName(), request.sessionId()));
     }
 
+    @DeleteMapping("/my/{sessionId}")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<String> deleteMy(Authentication auth, @PathVariable Long sessionId) {
+        RegService.deleteOptionalForPatient(auth.getName(), sessionId);
+        return ResponseEntity.ok("Запись на необязательную процедуру отменена");
+    }
+
     @PostMapping("/mandatory")
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
     public ResponseEntity<RegistrationDto> createMandatory(Authentication auth, @RequestBody RegistrationDto dto) {
