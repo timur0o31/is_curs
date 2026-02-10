@@ -26,6 +26,7 @@ public class UserService {
     private final DoctorRepository doctorRepository;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MedicalCardService medicalCardService;
 
     @Transactional
     public User createUser(String email, String password, String name, Role role) {
@@ -48,7 +49,7 @@ public class UserService {
             Patient patient = Patient.builder()
                     .user(savedUser)
                     .build();
-            patientRepository.save(patient);
+            medicalCardService.createForPatient(patientRepository.save(patient).getId());
         } else if (role == Role.DOCTOR) {
             Doctor doctor = Doctor.builder()
                     .user(savedUser)

@@ -14,4 +14,5 @@ public class SeatDto {
     private Long diningTableId;
     private Integer seatNumber;
     private Long patientId;
+    private Boolean isOccupied;
 }

@@ -34,6 +34,12 @@ public class MedicalCardService {
         return mapper.toDto(repository.save(entity));
     }
 
+    public MedicalCardDto createForPatient(Long patientId) {
+        MedicalCard entity = new MedicalCard();
+        entity.setPatientId(patientId);
+        return mapper.toDto(repository.save(entity));
+    }
+
     public MedicalCardDto update(Long id, MedicalCardDto dto) {
         MedicalCard entity = mapper.toEntity(dto);
         entity.setId(id);
@@ -50,16 +56,12 @@ public class MedicalCardService {
         return mapper.toDto(entity);
     }
 
-    /**
-     * Обновляет диету пациента и переопределяет рассадку в столовой в соответствии с новой диетой.
-     */
     public MedicalCardDto updateDietAndAssignSeat(Long patientId, Diet newDiet) {
         MedicalCard entity = repository.findByPatientId(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("MedicalCard not found for patient: " + patientId));
         entity.setDiet(newDiet);
         MedicalCard saved = repository.save(entity);
 
-        // Учитываем диету при рассадке
         seatService.assignSeatForPatientByDiet(patientId, newDiet);
 
         return mapper.toDto(saved);

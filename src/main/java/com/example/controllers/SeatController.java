@@ -3,6 +3,8 @@ package com.example.controllers;
 import com.example.dto.SeatDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,5 +55,28 @@ public class SeatController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @PostMapping("/book")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<SeatDto> bookSeat(
+            @RequestParam Long patientId,
+            @RequestParam Long seatId) {
+        SeatDto booked = service.bookSeat(patientId, seatId);
+        return ResponseEntity.ok(booked);
+    }
+
+    @PostMapping("/release")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<String> releaseSeat(@RequestParam Long patientId) {
+        service.releaseSeat(patientId);
+        return ResponseEntity.ok("Место освобождено");
+    }
+
+    @GetMapping("/available")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<List<SeatDto>> getAvailableSeatsForPatient(@RequestParam Long patientId) {
+        List<SeatDto> availableSeats = service.getAvailableSeatsForPatient(patientId);
+        return ResponseEntity.ok(availableSeats);
     }
 }

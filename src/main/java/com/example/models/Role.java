@@ -26,7 +26,8 @@ public enum Role {
             STAY_REQUEST_READ, STAY_REQUEST_WRITE, STAY_REQUEST_APPROVE,
             SESSION_READ, SESSION_WRITE, SESSION_DELETE,
             PRESCRIPTION_READ, PRESCRIPTION_WRITE,
-            LOCKER_READ, LOCKER_WRITE
+            LOCKER_READ, LOCKER_WRITE,
+            DIARY_ENTRY_READ, DIARY_ENTRY_WRITE
     )),
 
     /**
@@ -38,7 +39,8 @@ public enum Role {
             STAY_REQUEST_READ,
             SESSION_READ, SESSION_WRITE,
             PRESCRIPTION_READ, PRESCRIPTION_WRITE,
-            ROOM_READ
+            ROOM_READ,
+            DIARY_ENTRY_READ, DIARY_ENTRY_WRITE
     )),
 
     /**

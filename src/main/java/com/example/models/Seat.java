@@ -33,4 +33,7 @@ public class Seat {
 
     @Column(name = "patient_id")
     private Long patientId;
+
+    @Column(name = "is_occupied", nullable = false)
+    private Boolean isOccupied = false;
 }

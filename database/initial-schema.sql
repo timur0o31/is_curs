@@ -69,10 +69,10 @@ CREATE TABLE Locker (
 CREATE TABLE Medical_Card (
     id SERIAL PRIMARY KEY,
     patient_id INT NOT NULL UNIQUE REFERENCES Patient(id) ON DELETE CASCADE,
-    diet diet NOT NULL,
-    phone_number VARCHAR(12) NOT NULL,
-    height INT NOT NULL CHECK (height > 0),
-    weight INT NOT NULL CHECK (weight > 0)
+    diet diet,
+    phone_number VARCHAR(12),
+    height INT CHECK (height > 0),
+    weight INT CHECK (weight > 0)
 );
 
 
@@ -87,7 +87,8 @@ CREATE TABLE Seat (
     id SERIAL PRIMARY KEY,
     dining_table_id INT NOT NULL REFERENCES Dining_Table(id) ON DELETE CASCADE,
     seat_number INT NOT NULL UNIQUE,
-    patient_id INT REFERENCES Patient(id) ON DELETE SET NULL
+    patient_id INT REFERENCES Patient(id) ON DELETE SET NULL,
+    is_occupied BOOLEAN DEFAULT FALSE
 );
 
 
