@@ -15,5 +15,6 @@ public class ProcedureDto {
     private String name;
     private String description;
     private Integer defaultSeats;
+    private Boolean isOptional;
     private Duration duration;
 }

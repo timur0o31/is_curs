@@ -32,6 +32,9 @@ public class Procedure {
     @Column(name = "default_seats")
     private Integer defaultSeats;
 
+    @Column(name = "is_optional", nullable = false)
+    private Boolean isOptional = false;
+
     @Column(nullable = false)
     private Duration duration;
 }

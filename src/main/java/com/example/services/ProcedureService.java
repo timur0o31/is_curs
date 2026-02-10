@@ -25,12 +25,18 @@ public class ProcedureService {
     }
 
     public ProcedureDto create(ProcedureDto dto) {
+        if (dto.getIsOptional() == null) {
+            dto.setIsOptional(false);
+        }
         Procedure entity = mapper.toEntity(dto);
         entity.setId(null);
         return mapper.toDto(repository.save(entity));
     }
 
     public ProcedureDto update(Long id, ProcedureDto dto) {
+        if (dto.getIsOptional() == null) {
+            dto.setIsOptional(false);
+        }
         Procedure entity = mapper.toEntity(dto);
         entity.setId(id);
         return mapper.toDto(repository.save(entity));

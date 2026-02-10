@@ -85,7 +85,7 @@ public class StayRequestService {
     }
 
     public Long approveRequest(Long requestId, Long roomId, Long doctorId) {
-        return repository.approveStayRequest(requestId, roomId, doctorId);
+        return repository.approveStayRequest(requestId, roomId, doctorId); // Добавить уведомление для врача
     }
 
     @Transactional

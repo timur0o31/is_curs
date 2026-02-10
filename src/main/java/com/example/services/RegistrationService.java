@@ -6,6 +6,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import com.example.mapper.RegistrationMapper;
 import com.example.models.Doctor;
+import com.example.models.Patient;
+import com.example.models.Procedure;
 import com.example.models.Registration;
 import com.example.models.Registration.RegistrationId;
 import com.example.models.RequestStatus;
@@ -15,6 +17,7 @@ import com.example.models.StayRequest;
 import com.example.models.User;
 import org.springframework.stereotype.Service;
 import com.example.repositories.DoctorRepository;
+import com.example.repositories.PatientRepository;
 import com.example.repositories.RegistrationRepository;
 import com.example.repositories.SessionRepository;
 import com.example.repositories.StayRepository;
@@ -26,6 +29,7 @@ public class RegistrationService {
     private final RegistrationMapper mapper;
     private final UserService userService;
     private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
     private final StayRepository stayRepository;
     private final SessionRepository sessionRepository;
 
@@ -46,7 +50,15 @@ public class RegistrationService {
         }
 
         Registration entity = mapper.toEntity(dto);
-        validateRegistration(entity);
+        Stay stay = getStayOrThrow(entity.getStay());
+        Session session = getSessionOrThrow(entity.getSession());
+        validateStayPeriod(stay, session);
+        validateCapacity(session);
+
+        Procedure procedure = session.getProcedure();
+        if (procedure != null && !Boolean.TRUE.equals(procedure.getIsOptional())) {
+            throw new IllegalArgumentException("Процедура недоступна для самостоятельной записи");
+        }
 
         // UC-8 / UC-9: проверка, что пациент не записан на тот же сеанс дважды
         ensureNotDuplicate(entity);
@@ -54,18 +66,33 @@ public class RegistrationService {
         return mapper.toDto(repository.save(entity));
     }
 
+    public RegistrationDto createOptionalForPatient(String email, Long sessionId) {
+        if (sessionId == null) {
+            throw new IllegalArgumentException("sessionId is required");
+        }
+        Stay stay = findActiveStayByEmail(email);
+        if (stay == null) {
+            throw new IllegalArgumentException("Активное проживание не найдено");
+        }
+        RegistrationDto dto = new RegistrationDto(stay.getId(), sessionId, false);
+        return create(dto);
+    }
+
     public RegistrationDto createMandatoryForDoctor(String email, RegistrationDto dto) {
         dto.setIsNecessary(true);
 
         Registration entity = mapper.toEntity(dto);
-        RegistrationContext context = validateRegistration(entity);
+        Stay stay = getStayOrThrow(entity.getStay());
+        Session session = getSessionOrThrow(entity.getSession());
+        validateStayPeriod(stay, session);
+        validateCapacity(session);
 
         User user = userService.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
         Doctor doctor = doctorRepository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found for user: " + email));
 
-        if (context.stay.getDoctorId() == null || !context.stay.getDoctorId().equals(doctor.getId())) {
+        if (stay.getDoctorId() == null || !stay.getDoctorId().equals(doctor.getId())) {
             throw new IllegalArgumentException("Врач не является лечащим для данного пациента");
         }
 
@@ -77,7 +104,10 @@ public class RegistrationService {
         dto.setIsNecessary(true);
 
         Registration entity = mapper.toEntity(dto);
-        validateRegistration(entity);
+        Stay stay = getStayOrThrow(entity.getStay());
+        Session session = getSessionOrThrow(entity.getSession());
+        validateStayPeriod(stay, session);
+        validateCapacity(session);
         ensureNotDuplicate(entity);
 
         return mapper.toDto(repository.save(entity));
@@ -101,6 +131,23 @@ public class RegistrationService {
         return repository.findBySession_Id(sessionId).stream().map(mapper::toDto).toList();
     }
 
+    public List<RegistrationDto> getMyRegistrations(String email, Boolean required) {
+        Stay stay = findActiveStayByEmail(email);
+        if (stay == null) {
+            return List.of();
+        }
+        List<RegistrationDto> registrations = repository.findByStay_Id(stay.getId())
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+        if (required == null) {
+            return registrations;
+        }
+        return registrations.stream()
+                .filter(r -> required.equals(r.getIsNecessary()))
+                .toList();
+    }
+
     private void ensureNotDuplicate(Registration entity) {
         if (entity.getStay() == null || entity.getSession() == null) {
             return;
@@ -117,19 +164,23 @@ public class RegistrationService {
         }
     }
 
-    private RegistrationContext validateRegistration(Registration entity) {
-        if (entity.getStay() == null || entity.getStay().getId() == null) {
+    private Stay getStayOrThrow(Stay stay) {
+        if (stay == null || stay.getId() == null) {
             throw new IllegalArgumentException("stayId is required");
         }
-        if (entity.getSession() == null || entity.getSession().getId() == null) {
+        return stayRepository.findById(stay.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Stay not found: " + stay.getId()));
+    }
+
+    private Session getSessionOrThrow(Session session) {
+        if (session == null || session.getId() == null) {
             throw new IllegalArgumentException("sessionId is required");
         }
+        return sessionRepository.findById(session.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Session not found: " + session.getId()));
+    }
 
-        Stay stay = stayRepository.findById(entity.getStay().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Stay not found: " + entity.getStay().getId()));
-        Session session = sessionRepository.findById(entity.getSession().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Session not found: " + entity.getSession().getId()));
-
+    private void validateStayPeriod(Stay stay, Session session) {
         StayRequest stayRequest = stay.getStayRequest();
         if (stayRequest.getStatus() != RequestStatus.APPROVED) {
             throw new IllegalArgumentException("Проживание не активно");
@@ -143,15 +194,38 @@ public class RegistrationService {
             }
         }
 
+    }
+
+    private void validateCapacity(Session session) {
         if (session.getProcedure() != null && session.getProcedure().getDefaultSeats() != null) {
             long current = repository.countBySession_Id(session.getId());
             if (current >= session.getProcedure().getDefaultSeats()) {
                 throw new IllegalArgumentException("На сеанс уже записано максимальное число пациентов");
             }
         }
-
-        return new RegistrationContext(stay, session);
     }
 
-    private record RegistrationContext(Stay stay, Session session) {}
+    private Stay findActiveStayByEmail(String email) {
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+        Patient patient = patientRepository.findByUser_Id(user.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found for user: " + email));
+
+        Stay stay = stayRepository
+                .findFirstByStayRequest_Patient_IdAndStayRequest_TypeAndStayRequest_StatusOrderByIdDesc(
+                        patient.getId(), com.example.models.RequestType.CHECK_IN, RequestStatus.APPROVED)
+                .orElse(null);
+        if (stay == null) {
+            return null;
+        }
+
+        StayRequest stayRequest = stay.getStayRequest();
+        LocalDate today = LocalDate.now();
+        if (stayRequest.getDischargeDate().isBefore(today)) {
+            return null;
+        }
+
+        return stay;
+    }
+
 }

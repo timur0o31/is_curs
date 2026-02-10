@@ -1,26 +1,26 @@
 curl -i -X POST http://localhost:8080/api/procedures \
-  -H "Authorization: Bearer $ADMIN" \
+  -H "Authorization: Bearer $ADMINHOS" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Массаж","description":"Локальный массаж спины и шейно-воротниковой зоны","defaultSeats":1,"duration":"PT30M"}'
+  -d '{"name":"Массаж","description":"Локальный массаж спины и шейно-воротниковой зоны","defaultSeats":1,"duration":"PT30M","isOptional":false}'
 
 curl -i -X POST http://localhost:8080/api/procedures \
   -H "Authorization: Bearer $ADMINHOS" \
   -H "Content-Type: application/json" \
-  -d '{"name":"ЛФК","description":"Групповая лечебная физкультура под контролем инструктора","defaultSeats":10,"duration":"PT45M"}'
+  -d '{"name":"ЛФК","description":"Групповая лечебная физкультура под контролем инструктора","defaultSeats":10,"duration":"PT45M","isOptional":false}'
 
 curl -i -X POST http://localhost:8080/api/procedures \
   -H "Authorization: Bearer $ADMINHOS" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Ингаляция","description":"Небулайзерная ингаляция с физраствором","defaultSeats":4,"duration":"PT15M"}'
+  -d '{"name":"Ингаляция","description":"Небулайзерная ингаляция с физраствором","defaultSeats":4,"duration":"PT15M","isOptional":false}'
 curl -i -X POST http://localhost:8080/api/procedures \
   -H "Authorization: Bearer $ADMINHOS" \
   -H "Content-Type: application/json" \
-  -d '{"name":"УВЧ","description":"УВЧ‑прогревание грудной клетки или суставов","defaultSeats":1,"duration":"PT10M"}'
+  -d '{"name":"УВЧ","description":"УВЧ‑прогревание грудной клетки или суставов","defaultSeats":1,"duration":"PT10M","isOptional":false}'
 curl -i -X POST http://localhost:8080/api/procedures \
   -H "Authorization: Bearer $ADMINHOS" \
   -H "Content-Type: application/json" \
-  -d '{"name":"УЗТерапия","description":"Ультразвуковая терапия суставов и мягких тканей","defaultSeats":1,"duration":"PT20M"}'
+  -d '{"name":"УЗТерапия","description":"Ультразвуковая терапия суставов и мягких тканей","defaultSeats":1,"duration":"PT20M","isOptional":false}'
 curl -i -X POST http://localhost:8080/api/procedures \
   -H "Authorization: Bearer $ADMINHOS" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Электрофорез","description":"Лекарственный электрофорез на проблемную область","defaultSeats":1,"duration":"PT20M"}'
+  -d '{"name":"Электрофорез","description":"Лекарственный электрофорез на проблемную область","defaultSeats":1,"duration":"PT20M","isOptional":false}'
