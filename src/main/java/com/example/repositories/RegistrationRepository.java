@@ -9,4 +9,6 @@ public interface RegistrationRepository extends JpaRepository<Registration, Regi
     List<Registration> findByStay_Id(Long stayId);
 
     List<Registration> findBySession_Id(Long sessionId);
+
+    long countBySession_Id(Long sessionId);
 }

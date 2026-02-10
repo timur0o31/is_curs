@@ -51,6 +51,12 @@ public class StayRequestService {
     public StayRequestDto createExpansionRequest(String email, java.time.LocalDate admissionDate, java.time.LocalDate dischargeDate) {
         User user = userService.findByEmail(email).orElseThrow();
         Patient patient = patientRepository.findByUser_Id(user.getId()).orElseThrow();
+        boolean hasActiveStay = stayRepository.findFirstByStayRequest_Patient_IdAndStayRequest_TypeAndStayRequest_StatusOrderByIdDesc(
+                patient.getId(), RequestType.CHECK_IN, RequestStatus.APPROVED)
+                .isPresent();
+        if (!hasActiveStay){
+            throw new IllegalArgumentException("Нельзя продлить без активного проживания");
+        }
         StayRequest entity = new StayRequest();
         entity.setPatient(patient);
         entity.setAdmissionDate(admissionDate);

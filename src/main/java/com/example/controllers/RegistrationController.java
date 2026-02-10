@@ -3,6 +3,9 @@ package com.example.controllers;
 import com.example.dto.RegistrationDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +46,17 @@ public class RegistrationController {
     @PostMapping
     public RegistrationDto create(@RequestBody RegistrationDto dto) {
         return service.create(dto);
+    }
+
+    @PostMapping("/mandatory")
+    @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
+    public ResponseEntity<RegistrationDto> createMandatory(Authentication auth, @RequestBody RegistrationDto dto) {
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (isAdmin) {
+            return ResponseEntity.ok(service.createMandatoryByAdmin(dto));
+        }
+        return ResponseEntity.ok(service.createMandatoryForDoctor(auth.getName(), dto));
     }
 
     @PutMapping("/{stayId}/{sessionId}")

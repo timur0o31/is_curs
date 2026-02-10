@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class Session {
 
     @Column(name = "doctor_id", nullable = false)
     private Long doctorId;
+
+    @Column(name = "session_date", nullable = false)
+    private LocalDate sessionDate;
 
     @Column(name = "time_start", nullable = false)
     private LocalTime timeStart;

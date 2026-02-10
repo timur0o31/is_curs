@@ -104,7 +104,7 @@ public class DoctorController {
             @RequestBody List<ConsultationSlotRequest> slots) {
         List<SessionDto> created = slots.stream()
                 .map(slot -> sessionService.create(
-                        new SessionDto(null, null, slot.doctorId(), slot.timeStart())))
+                        new SessionDto(null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
                 .toList();
         return ResponseEntity.ok(created);
     }
@@ -146,7 +146,7 @@ public class DoctorController {
         return ResponseEntity.ok(entry);
     }
 
-    public record ConsultationSlotRequest(Long doctorId, LocalTime timeStart) {}
+    public record ConsultationSlotRequest(Long doctorId, LocalDate sessionDate, LocalTime timeStart) {}
 
     public record PrescriptionCreateRequest(
             Long medicamentId,
