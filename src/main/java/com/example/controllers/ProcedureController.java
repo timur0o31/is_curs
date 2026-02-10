@@ -3,6 +3,8 @@ package com.example.controllers;
 import com.example.dto.ProcedureDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,32 +23,39 @@ public class ProcedureController {
     private final ProcedureService service;
 
     @GetMapping
-    public List<ProcedureDto> getAll() {
-        return service.getAll();
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    public ResponseEntity<List<ProcedureDto>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
-    public ProcedureDto getById(@PathVariable Long id) {
-        return service.getById(id);
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    public ResponseEntity<ProcedureDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 
     @PostMapping
-    public ProcedureDto create(@RequestBody ProcedureDto dto) {
-        return service.create(dto);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProcedureDto> create(@RequestBody ProcedureDto dto) {
+        return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ProcedureDto update(@PathVariable Long id, @RequestBody ProcedureDto dto) {
-        return service.update(id, dto);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProcedureDto> update(@PathVariable Long id, @RequestBody ProcedureDto dto) {
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")
-    public List<ProcedureDto> searchByName(@RequestParam String name) {
-        return service.searchByName(name);
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    public ResponseEntity<List<ProcedureDto>> searchByName(@RequestParam String name) {
+        return ResponseEntity.ok(service.searchByName(name));
     }
 }

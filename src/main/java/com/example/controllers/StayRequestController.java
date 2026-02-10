@@ -3,14 +3,11 @@ package com.example.controllers;
 import com.example.dto.StayRequestDto;
 import java.util.List;
 
-import com.example.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import com.example.models.RequestStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,13 +76,14 @@ public class StayRequestController {
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('stay_request:write')")
-    public StayRequestDto update(@PathVariable Long id, @RequestBody StayRequestDto dto) {
-        return service.update(id, dto);
+    public ResponseEntity<StayRequestDto> update(@PathVariable Long id, @RequestBody StayRequestDto dto) {
+        return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('stay_request:write')")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         service.delete(id);
+        return ResponseEntity.ok("Stay request deleated");
     }
 }

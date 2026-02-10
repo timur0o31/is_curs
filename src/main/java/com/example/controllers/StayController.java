@@ -27,13 +27,14 @@ public class StayController {
     private final StayService stayService;
 
     @GetMapping
-    public List<StayDto> getAll() {
-        return stayService.getAll();
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<StayDto>> getAll() {
+        return ResponseEntity.ok(stayService.getAll());
     }
 
     @GetMapping(params = "doctorId")
-    public List<StayDto> getByDoctorId(@RequestParam Long doctorId) {
-        return stayService.getByDoctorId(doctorId);
+    public ResponseEntity<List<StayDto>> getByDoctorId(@RequestParam Long doctorId) {
+        return ResponseEntity.ok(stayService.getByDoctorId(doctorId));
     }
     @PostMapping("/{id}/discharge")
     @PreAuthorize("hasRole('ADMIN')")
@@ -46,27 +47,31 @@ public class StayController {
     }
 
     @GetMapping(params = "roomId")
-    public List<StayDto> getByRoomId(@RequestParam Long roomId) {
-        return stayService.getByRoomId(roomId);
+    public ResponseEntity<List<StayDto>> getByRoomId(@RequestParam Long roomId) {
+        return ResponseEntity.ok(stayService.getByRoomId(roomId));
     }
 
     @GetMapping("/{id}")
-    public StayDto getById(@PathVariable Long id) {
-        return stayService.getById(id);
+    public ResponseEntity<StayDto> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(stayService.getById(id));
     }
 
     @PostMapping
-    public StayDto create(@RequestBody StayDto dto) {
-        return stayService.create(dto);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<StayDto> create(@RequestBody StayDto dto) {
+        return ResponseEntity.ok(stayService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public StayDto update(@PathVariable Long id, @RequestBody StayDto dto) {
-        return stayService.update(id, dto);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<StayDto> update(@PathVariable Long id, @RequestBody StayDto dto) {
+        return ResponseEntity.ok(stayService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         stayService.delete(id);
+        return ResponseEntity.ok("Stay удален");
     }
 }
