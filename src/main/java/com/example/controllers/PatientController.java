@@ -1,16 +1,28 @@
 package com.example.controllers;
 
+import com.example.dto.MedicalCardDto;
+import com.example.dto.PrescriptionDto;
+import com.example.security.UserDetailsImpl;
+import com.example.services.MedicalCardService;
+import com.example.services.PrescriptionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/patient")
+@RequiredArgsConstructor
 public class PatientController {
+
+    private final MedicalCardService medicalCardService;
+    private final PrescriptionService prescriptionService;
 
     @GetMapping("/dashboard")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
@@ -47,8 +59,18 @@ public class PatientController {
 
     @GetMapping("/prescriptions")
     @PreAuthorize("hasAuthority('prescription:read')")
-    public ResponseEntity<String> getMyPrescriptions() {
-        return ResponseEntity.ok("Мои рецепты");
+    public ResponseEntity<List<PrescriptionDto>> getMyPrescriptions(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        // Получаем ID пациента из текущего пользователя
+        Long userId = userDetails.getId();
+
+        // Получаем медицинскую карту пациента
+        MedicalCardDto medicalCard = medicalCardService.getByPatientUserId(userId);
+
+        // Получаем все рецепты по медицинской карте
+        List<PrescriptionDto> prescriptions = prescriptionService.getByMedicalCardId(medicalCard.getId());
+
+        return ResponseEntity.ok(prescriptions);
     }
 
     @GetMapping("/room")

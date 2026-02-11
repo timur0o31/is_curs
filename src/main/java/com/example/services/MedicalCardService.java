@@ -4,8 +4,9 @@ import com.example.dto.MedicalCardDto;
 import com.example.mapper.MedicalCardMapper;
 import com.example.models.Diet;
 import com.example.models.MedicalCard;
+import com.example.models.Patient;
 import com.example.repositories.MedicalCardRepository;
-import com.example.services.SeatService;
+import com.example.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MedicalCardService {
     private final MedicalCardRepository repository;
+    private final PatientRepository patientRepository;
     private final MedicalCardMapper mapper;
     private final SeatService seatService;
 
@@ -54,6 +56,12 @@ public class MedicalCardService {
         MedicalCard entity = repository.findByPatientId(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("MedicalCard not found for patient: " + patientId));
         return mapper.toDto(entity);
+    }
+
+    public MedicalCardDto getByPatientUserId(Long userId) {
+        Patient patient = patientRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found for user: " + userId));
+        return getByPatientId(patient.getId());
     }
 
     public MedicalCardDto updateDietAndAssignSeat(Long patientId, Diet newDiet) {

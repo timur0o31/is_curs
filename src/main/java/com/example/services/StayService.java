@@ -46,6 +46,12 @@ public class StayService {
         return repository.findByDoctorId(doctorId).stream().map(mapper::toDto).toList();
     }
 
+//    public StayDto getByStayRequestID(Long stayRequestId) {
+//        Stay entity = repository.findByStay_Request_Id(stayRequestId)
+//                .orElseThrow(() -> new IllegalArgumentException("Stay not found for StayRequest ID: " + stayRequestId));
+//        return mapper.toDto(entity);
+//    }
+
     public List<StayDto> getByRoomId(Long roomId) {
         return repository.findByRoom_Id(roomId).stream().map(mapper::toDto).toList();
     }

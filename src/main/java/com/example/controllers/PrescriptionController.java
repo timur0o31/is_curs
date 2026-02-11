@@ -1,8 +1,16 @@
 package com.example.controllers;
 
 import com.example.dto.PrescriptionDto;
+
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
+
+import com.example.models.Prescription;
+import com.example.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,9 +48,14 @@ public class PrescriptionController {
         return service.getById(id);
     }
 
-    @PostMapping
-    public PrescriptionDto create(@RequestBody PrescriptionDto dto) {
-        return service.create(dto);
+    @PostMapping("/patients/{patientId}/prescriptions")
+    @PreAuthorize("hasAuthority('prescription:write')")
+    public ResponseEntity<?> prescribe(
+            @AuthenticationPrincipal UserDetailsImpl user,
+            @PathVariable Long patientId,
+            @RequestBody PrescriptionDto dto
+    ) {
+        return ResponseEntity.ok(service.prescribe(user.getId(), patientId, dto));
     }
 
     @PutMapping("/{id}")

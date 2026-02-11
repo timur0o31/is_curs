@@ -15,6 +15,8 @@ public interface StayRepository extends JpaRepository<Stay, Long> {
 
     List<Stay> findByRoom_Id(Long roomId);
 
+    Optional<Stay> findByStayRequestId(Long stayRequestId);
+
     Optional<Stay> findFirstByStayRequest_Patient_IdAndStayRequest_TypeAndStayRequest_StatusOrderByIdDesc(
             Long patientId,
             RequestType type,

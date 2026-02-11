@@ -2,6 +2,8 @@ package com.example.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.example.models.Patient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

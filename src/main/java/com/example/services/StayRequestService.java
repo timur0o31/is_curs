@@ -1,9 +1,13 @@
 package com.example.services;
 
 import com.example.dto.StayRequestDto;
+
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.models.*;
+import com.example.repositories.DoctorRepository;
 import com.example.repositories.PatientRepository;
 import com.example.repositories.StayRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +24,9 @@ public class StayRequestService {
     private final UserService userService;
     private final PatientRepository patientRepository;
     private final StayRepository stayRepository;
+    private final NotificationService notificationService;
+    private final DoctorRepository doctorRepository;
+
     public List<StayRequestDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
     }
@@ -52,7 +59,7 @@ public class StayRequestService {
         User user = userService.findByEmail(email).orElseThrow();
         Patient patient = patientRepository.findByUser_Id(user.getId()).orElseThrow();
         boolean hasActiveStay = stayRepository.findFirstByStayRequest_Patient_IdAndStayRequest_TypeAndStayRequest_StatusOrderByIdDesc(
-                patient.getId(), RequestType.CHECK_IN, RequestStatus.APPROVED)
+                        patient.getId(), RequestType.CHECK_IN, RequestStatus.APPROVED)
                 .isPresent();
         if (!hasActiveStay){
             throw new IllegalArgumentException("Нельзя продлить без активного проживания");
@@ -84,9 +91,41 @@ public class StayRequestService {
         return repository.findByStatus(status).stream().map(mapper::toDto).toList();
     }
 
-    public Long approveRequest(Long requestId, Long roomId, Long doctorId) {
-        return repository.approveStayRequest(requestId, roomId, doctorId); // Добавить уведомление для врача
+    public Optional<StayRequest> getActiveStayRequest(Long patientId) {
+        LocalDate currentDate = LocalDate.now();
+        return repository.findActiveStayRequestByPatientId(patientId, currentDate);
     }
+
+
+    @Transactional
+    public Long approveRequest(Long requestId, Long roomId, Long doctorId) {
+        StayRequest request = repository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("StayRequest not found: " + requestId));
+
+        Long stayId = repository.approveStayRequest(requestId, roomId, doctorId);
+
+        // Уведомляем пациента об одобрении заявки
+        Long patientUserId = request.getPatient().getUser().getId();
+        notificationService.notifyUser(
+                patientUserId,
+                "Ваша заявка #" + requestId + " была одобрена"
+        );
+
+        // Уведомляем врача о новом пациенте, если указан doctorId
+        if (doctorId != null) {
+            doctorRepository.findById(doctorId).ifPresent(doctor -> {
+                Long doctorUserId = doctor.getUser().getId();
+                String patientName = request.getPatient().getUser().getName();
+                notificationService.notifyUser(
+                        doctorUserId,
+                        "К вам прикреплён новый пациент: " + (patientName != null ? patientName : "ID " + request.getPatient().getId())
+                );
+            });
+        }
+
+        return stayId;
+    }
+
 
     @Transactional
     public StayRequestDto approveExpansion(Long requestId) {
@@ -109,14 +148,40 @@ public class StayRequestService {
         firstStayRequest.setDischargeDate(expansion.getDischargeDate());
         expansion.setStatus(RequestStatus.APPROVED);
 
+        Long patientUserId = expansion.getPatient().getUser().getId();
+        notificationService.notifyUser(
+                patientUserId,
+                "Ваша заявка #" + requestId + " была одобрена"
+        );
+
+        doctorRepository.findById(stay.getDoctorId()).ifPresent(doctor -> {
+            Long doctorUserId = doctor.getUser().getId();
+            String patientName = expansion.getPatient().getUser().getName();
+            notificationService.notifyUser(
+                    doctorUserId,
+                    "Продление проживания у пациента: " + (patientName != null ? patientName : "ID " + expansion.getPatient().getId())
+            );
+        });
+
         repository.save(firstStayRequest);
         return mapper.toDto(repository.save(expansion));
     }
+
     @Transactional
     public void rejectRequest(Long requestId) {
+        StayRequest request = repository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("StayRequest not found: " + requestId));
+
         int updated = repository.rejectStayRequest(requestId);
         if (updated == 0) {
             throw new IllegalArgumentException("StayRequest not found: " + requestId);
         }
+
+        // Уведомляем пациента об отказе по заявке
+        Long patientUserId = request.getPatient().getUser().getId();
+        notificationService.notifyUser(
+                patientUserId,
+                "Ваша заявка #" + requestId + " была отклонена"
+        );
     }
 }
