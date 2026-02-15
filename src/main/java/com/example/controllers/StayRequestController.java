@@ -30,6 +30,7 @@ public class StayRequestController {
     public ResponseEntity<List<StayRequestDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
+
     @GetMapping(params = "patientId")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<StayRequestDto>> getByPatientId(@RequestParam Long patientId) {

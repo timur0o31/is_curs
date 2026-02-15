@@ -9,7 +9,7 @@ import com.example.services.UserService;
 import com.example.models.Role;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
