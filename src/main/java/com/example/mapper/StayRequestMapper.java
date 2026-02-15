@@ -11,6 +11,7 @@ import org.mapstruct.Named;
 public interface StayRequestMapper {
 
     @Mapping(source = "patient.id", target = "patientId")
+    @Mapping(source = "patient.user.name", target = "patientName")
     StayRequestDto toDto(StayRequest entity);
 
     @Mapping(source = "patientId", target = "patient", qualifiedByName = "patientIdToPatient")
