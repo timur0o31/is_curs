@@ -47,7 +47,7 @@ public class DiaryEntryController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN') and @doctorAccess.canWork(authentication)")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

@@ -24,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/doctor")
 @RequiredArgsConstructor
+@PreAuthorize("@doctorAccess.canWork(authentication)")
 public class DoctorController {
 
     private final MedicalCardService medicalCardService;

@@ -19,5 +19,10 @@ public class Doctor {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-}
 
+    @Column(length = 120)
+    private String specialization;
+
+    @Column(name = "is_working", nullable = false)
+    private boolean working = false;
+}

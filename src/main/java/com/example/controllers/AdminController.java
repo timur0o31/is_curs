@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.services.UserService;
+import com.example.services.DoctorService;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
+    private final DoctorService doctorService;
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
@@ -35,6 +37,13 @@ public class AdminController {
     public ResponseEntity<String> createAdmin(@RequestBody CreateUserRequest request) {
         userService.createUser(request.email, request.password, request.name, Role.ADMIN);
         return ResponseEntity.ok("Администратор создан");
+    }
+
+    @PostMapping("/doctors/{id}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> approveDoctor(@PathVariable Long id) {
+        doctorService.setWorking(id, true);
+        return ResponseEntity.ok("Врач подтвержден");
     }
 
     @GetMapping("/users/{id}")

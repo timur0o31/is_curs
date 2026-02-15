@@ -36,12 +36,12 @@ public class SessionController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('DOCTOR') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<List<SessionDto>> getMySessions(Authentication auth) {
         return ResponseEntity.ok(service.getByDoctorEmail(auth.getName()));
     }
     @PostMapping("/my")
-    @PreAuthorize("hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('DOCTOR') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<SessionDto> createMy(Authentication auth, @RequestBody SessionDto dto) {
         return ResponseEntity.ok(service.createForDoctor(auth.getName(), dto));
     }

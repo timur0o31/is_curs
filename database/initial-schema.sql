@@ -23,7 +23,9 @@ CREATE TABLE Admin (
 
 CREATE TABLE Doctor (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE
+    user_id INT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+    specialization VARCHAR(120),
+    is_working BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 

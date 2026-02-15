@@ -23,13 +23,13 @@ public class ProcedureController {
     private final ProcedureService service;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<List<ProcedureDto>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<ProcedureDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
@@ -54,7 +54,7 @@ public class ProcedureController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<List<ProcedureDto>> searchByName(@RequestParam String name) {
         return ResponseEntity.ok(service.searchByName(name));
     }

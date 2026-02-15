@@ -25,7 +25,7 @@ public class PatientController {
     private final PrescriptionService prescriptionService;
 
     @GetMapping("/dashboard")
-    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
+    @PreAuthorize("hasRole('PATIENT') or @doctorAccess.canWork(authentication)")
     public ResponseEntity<Map<String, String>> getPatientDashboard(Authentication authentication) {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Панель пациента");
@@ -85,4 +85,3 @@ public class PatientController {
         return ResponseEntity.ok("Информация о моем шкафчике");
     }
 }
-

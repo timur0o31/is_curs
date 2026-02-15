@@ -24,25 +24,25 @@ public class RegistrationController {
     private final RegistrationService RegService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public List<RegistrationDto> getAll() {
         return RegService.getAll();
     }
 
     @GetMapping(params = "stayId")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public List<RegistrationDto> getByStayId(@RequestParam Long stayId) {
         return RegService.getByStayId(stayId);
     }
 
     @GetMapping(params = "sessionId")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public List<RegistrationDto> getBySessionId(@RequestParam Long sessionId) {
         return RegService.getBySessionId(sessionId);
     }
 
     @GetMapping("/{stayId}/{sessionId}")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public RegistrationDto getById(@PathVariable Long stayId, @PathVariable Long sessionId) {
         return RegService.getById(stayId, sessionId);
     }
@@ -56,7 +56,7 @@ public class RegistrationController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public RegistrationDto create(@RequestBody RegistrationDto dto) {
         return RegService.create(dto);
     }
@@ -75,7 +75,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/mandatory")
-    @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
+    @PreAuthorize("hasAnyRole('DOCTOR','ADMIN') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<RegistrationDto> createMandatory(Authentication auth, @RequestBody RegistrationDto dto) {
         boolean isAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
@@ -86,7 +86,7 @@ public class RegistrationController {
     }
 
     @PutMapping("/{stayId}/{sessionId}")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public RegistrationDto update(
             @PathVariable Long stayId,
             @PathVariable Long sessionId,
@@ -95,7 +95,7 @@ public class RegistrationController {
     }
 
     @DeleteMapping("/{stayId}/{sessionId}")
-    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public void delete(@PathVariable Long stayId, @PathVariable Long sessionId) {
         RegService.delete(stayId, sessionId);
     }
