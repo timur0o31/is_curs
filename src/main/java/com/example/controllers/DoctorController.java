@@ -5,14 +5,13 @@ import com.example.dto.MedicalCardDto;
 import com.example.dto.PrescriptionDto;
 import com.example.dto.SessionDto;
 import com.example.models.Diet;
-import com.example.services.DiaryEntryService;
-import com.example.services.MedicalCardService;
-import com.example.services.PrescriptionService;
-import com.example.services.SessionService;
+import com.example.security.UserDetailsImpl;
+import com.example.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,20 +30,23 @@ public class DoctorController {
     private final DiaryEntryService diaryEntryService;
     private final PrescriptionService prescriptionService;
     private final SessionService sessionService;
-
+    private final DoctorService doctorService;
+    private final StayService stayService;
     @GetMapping("/dashboard")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public ResponseEntity<Map<String, String>> getDoctorDashboard(Authentication authentication) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Панель врача");
-        response.put("user", authentication.getName());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Boolean> getDoctorDashboard(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(doctorService.getWorking(user.getId()));
     }
 
     @GetMapping("/patients")
     @PreAuthorize("hasAuthority('patient:read')")
     public ResponseEntity<String> getPatients() {
         return ResponseEntity.ok("Список пациентов врача");
+    }
+    @GetMapping("/active-patients")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<List<String>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(stayService.getPatientsByDoctorId(user.getId()));
     }
 
     /**
