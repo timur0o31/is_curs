@@ -1,18 +1,27 @@
 package com.example.services;
 
 import com.example.dto.RoomDto;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import com.example.mapper.RoomMapper;
 import com.example.models.Room;
+import com.example.models.Stay;
+import com.example.models.StayRequest;
 import org.springframework.stereotype.Service;
 import com.example.repositories.RoomRepository;
+import com.example.repositories.PatientRepository;
+import com.example.repositories.StayRepository;
+import com.example.repositories.StayRequestRepository;
 
 @Service
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository repository;
     private final RoomMapper mapper;
+    private final StayRequestRepository stayRequestRepository;
+    private final StayRepository stayRepository;
+    private final PatientRepository patientRepository;
 
     public List<RoomDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
@@ -49,5 +58,27 @@ public class RoomService {
 
     public List<RoomDto> getAvailableRooms() {
         return repository.findByIsOccupiedFalse().stream().map(mapper::toDto).toList();
+    }
+
+    public Integer getRoomNumberByPatientId(Long patientId) {
+        LocalDate today = LocalDate.now();
+        StayRequest stayRequest = stayRequestRepository.findActiveStayRequestByPatientId(patientId, today)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Active stay request not found for patient: " + patientId));
+        Stay stay = stayRepository.findByStayRequestId(stayRequest.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Stay not found for stay request: " + stayRequest.getId()));
+        Room room = stay.getRoom();
+        if (room == null || room.getRoomNumber() == null) {
+            throw new IllegalStateException("Room not assigned for patient: " + patientId);
+        }
+        return room.getRoomNumber();
+    }
+
+    public Integer getRoomNumberByUserId(Long userId) {
+        Long patientId = patientRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Patient not found for user: " + userId))
+                .getId();
+        return getRoomNumberByPatientId(patientId);
     }
 }

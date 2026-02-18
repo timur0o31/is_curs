@@ -43,4 +43,5 @@ public interface StayRequestRepository extends JpaRepository<StayRequest, Long> 
     @Modifying
     @Query(value = "update Stay_request set status = 'REJECTED' where id = :requestId", nativeQuery = true)
     int rejectStayRequest(@Param("requestId") Long requestId);
+    List<StayRequest> findByPatient_User_Id(Long userId);
 }

@@ -3,7 +3,9 @@ package com.example.controllers;
 import com.example.dto.RoomDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.services.RoomService;
+import com.example.security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -37,6 +40,18 @@ public class RoomController {
     @PreAuthorize("hasRole('ADMIN')")
     public RoomDto getById(@PathVariable Long id) {
         return service.getById(id);
+    }
+
+    @GetMapping("/by-patient/{patientId}/number")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
+    public ResponseEntity<Integer> getRoomNumberByPatientId(@PathVariable Long patientId) {
+        return ResponseEntity.ok(service.getRoomNumberByPatientId(patientId));
+    }
+
+    @GetMapping("/my/number")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<Integer> getMyRoomNumber(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(service.getRoomNumberByUserId(user.getId()));
     }
 
     @PostMapping

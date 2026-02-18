@@ -3,11 +3,13 @@ package com.example.controllers;
 import com.example.dto.StayRequestDto;
 import java.util.List;
 
+import com.example.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import com.example.models.RequestStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +44,11 @@ public class StayRequestController {
     public ResponseEntity<List<StayRequestDto>> getByStatus(@RequestParam RequestStatus status) {
         return ResponseEntity.ok(service.getByStatus(status));
     }
-
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<List<StayRequestDto>> getMy(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(service.getByPatientId(user.getId()));
+    }
     @PostMapping("/check-in")
     @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<StayRequestDto> createCheckIn(Authentication auth,@RequestBody StayRequestDto dto) {

@@ -1,24 +1,18 @@
 package com.example.controllers;
 
-import com.example.dto.DiaryEntryDto;
-import com.example.dto.MedicalCardDto;
-import com.example.dto.PrescriptionDto;
-import com.example.dto.SessionDto;
+import com.example.dto.*;
 import com.example.models.Diet;
 import com.example.security.UserDetailsImpl;
 import com.example.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/doctor")
@@ -45,7 +39,7 @@ public class DoctorController {
     }
     @GetMapping("/active-patients")
     @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<List<String>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
+    public ResponseEntity<List<ActivePatientDto>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
         return ResponseEntity.ok(stayService.getPatientsByDoctorId(user.getId()));
     }
 
@@ -55,8 +49,10 @@ public class DoctorController {
      */
     @GetMapping("/medical-cards/{patientId}")
     @PreAuthorize("hasAuthority('medical_card:read')")
-    public ResponseEntity<MedicalCardDto> getMedicalCard(@PathVariable Long patientId) {
-        MedicalCardDto card = medicalCardService.getByPatientId(patientId);
+    public ResponseEntity<MedicalCardDto> getMedicalCard(
+            @AuthenticationPrincipal UserDetailsImpl user,
+            @PathVariable Long patientId) {
+        MedicalCardDto card = medicalCardService.getByPatientIdForDoctorUser(patientId, user.getId());
         return ResponseEntity.ok(card);
     }
 
@@ -107,7 +103,7 @@ public class DoctorController {
             @RequestBody List<ConsultationSlotRequest> slots) {
         List<SessionDto> created = slots.stream()
                 .map(slot -> sessionService.create(
-                        new SessionDto(null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
+                        new SessionDto(null, null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
                 .toList();
         return ResponseEntity.ok(created);
     }

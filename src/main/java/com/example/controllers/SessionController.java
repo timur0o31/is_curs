@@ -46,7 +46,7 @@ public class SessionController {
         return ResponseEntity.ok(service.createForDoctor(auth.getName(), dto));
     }
     @GetMapping(params = "procedureId")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR') and @doctorAccess.canWork(authentication)")
     public ResponseEntity<List<SessionDto>> getByProcedureId(@RequestParam Long procedureId) {
         return ResponseEntity.ok(service.getByProcedureId(procedureId));
     }

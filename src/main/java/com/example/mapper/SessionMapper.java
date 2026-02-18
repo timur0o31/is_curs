@@ -10,6 +10,7 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface SessionMapper {
     @Mapping(target = "procedureId", source = "procedure.id")
+    @Mapping(target = "procedureName", source = "procedure.name")
     SessionDto toDto(Session entity);
 
     @Mapping(target = "procedure", source = "procedureId", qualifiedByName = "procedureFromId")

@@ -11,11 +11,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionDto {
-    private Long id;
-    private String procedureName;
-    private Long procedureId;
-    private Long doctorId;
+public class PatientScheduleItemDto {
+    private Long sessionId;
     private LocalDate sessionDate;
     private LocalTime timeStart;
+    private Long procedureId;
+    private String procedureName;
+    private Boolean isNecessary;
 }

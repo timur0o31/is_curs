@@ -52,7 +52,8 @@ public enum Role {
             SESSION_READ,
             PRESCRIPTION_READ,
             ROOM_READ,
-            LOCKER_READ
+            LOCKER_READ,
+            DIARY_ENTRY_READ, DIARY_ENTRY_WRITE
     ));
 
     /**

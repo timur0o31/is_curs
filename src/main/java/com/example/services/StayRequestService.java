@@ -83,8 +83,8 @@ public class StayRequestService {
         repository.deleteById(id);
     }
 
-    public List<StayRequestDto> getByPatientId(Long patientId) {
-        return repository.findByPatient_Id(patientId).stream().map(mapper::toDto).toList();
+    public List<StayRequestDto> getByPatientId(Long userId) {
+        return repository.findByPatient_User_Id(userId).stream().map(mapper::toDto).toList();
     }
 
     public List<StayRequestDto> getByStatus(RequestStatus status) {

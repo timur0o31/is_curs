@@ -1,11 +1,14 @@
 package com.example.controllers;
 
+import com.example.dto.PatientScheduleItemDto;
 import com.example.dto.RegistrationDto;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +56,29 @@ public class RegistrationController {
             Authentication auth,
             @RequestParam(required = false) Boolean required) {
         return ResponseEntity.ok(RegService.getMyRegistrations(auth.getName(), required));
+    }
+
+    @GetMapping("/my/schedule")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<List<PatientScheduleItemDto>> getMySchedule(
+            Authentication auth,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+    ) {
+        return ResponseEntity.ok(RegService.getMySchedule(auth.getName(), date, from, to));
+    }
+
+    @GetMapping("/patients/{patientId}/schedule")
+    @PreAuthorize("hasRole('DOCTOR') and @doctorAccess.canWork(authentication)")
+    public ResponseEntity<List<PatientScheduleItemDto>> getPatientSchedule(
+            Authentication auth,
+            @PathVariable Long patientId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+    ) {
+        return ResponseEntity.ok(RegService.getScheduleForPatientByDoctor(auth.getName(), patientId, date, from, to));
     }
 
     @PostMapping

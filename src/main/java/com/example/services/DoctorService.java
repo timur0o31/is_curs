@@ -19,4 +19,9 @@ public class DoctorService {
         doctor.setWorking(working);
         return doctorRepository.save(doctor);
     }
+    public boolean getWorking(Long userId) {
+        Doctor doctor = doctorRepository.findByUser_Id(userId)
+                .orElseThrow(()->new IllegalArgumentException("User Not Found"));
+        return doctor.isWorking();
+    }
 }

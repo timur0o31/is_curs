@@ -3,9 +3,12 @@ package com.example.services;
 import com.example.dto.MedicalCardDto;
 import com.example.mapper.MedicalCardMapper;
 import com.example.models.Diet;
+import com.example.models.Doctor;
 import com.example.models.MedicalCard;
 import com.example.models.Patient;
+import com.example.models.Stay;
 import com.example.repositories.MedicalCardRepository;
+import com.example.repositories.DoctorRepository;
 import com.example.repositories.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +20,10 @@ import java.util.List;
 public class MedicalCardService {
     private final MedicalCardRepository repository;
     private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
     private final MedicalCardMapper mapper;
     private final SeatService seatService;
+    private final StayService stayService;
 
     public List<MedicalCardDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
@@ -56,6 +61,16 @@ public class MedicalCardService {
         MedicalCard entity = repository.findByPatientId(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("MedicalCard not found for patient: " + patientId));
         return mapper.toDto(entity);
+    }
+
+    public MedicalCardDto getByPatientIdForDoctorUser(Long patientId, Long doctorUserId) {
+        Doctor doctor = doctorRepository.findByUser_Id(doctorUserId)
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found for user: " + doctorUserId));
+        Stay stay = stayService.getActiveStayByPatientId(patientId);
+        if (stay.getDoctorId() == null || !stay.getDoctorId().equals(doctor.getId())) {
+            throw new IllegalArgumentException("Врач не является лечащим для данного пациента");
+        }
+        return getByPatientId(patientId);
     }
 
     public MedicalCardDto getByPatientUserId(Long userId) {

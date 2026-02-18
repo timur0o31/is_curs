@@ -1,7 +1,9 @@
 package com.example.services;
 
+import com.example.dto.PatientScheduleItemDto;
 import com.example.dto.RegistrationDto;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import com.example.mapper.RegistrationMapper;
@@ -21,6 +23,7 @@ import com.example.repositories.PatientRepository;
 import com.example.repositories.RegistrationRepository;
 import com.example.repositories.SessionRepository;
 import com.example.repositories.StayRepository;
+import com.example.repositories.StayRequestRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,7 @@ public class RegistrationService {
     private final PatientRepository patientRepository;
     private final StayRepository stayRepository;
     private final SessionRepository sessionRepository;
+    private final StayRequestRepository stayRequestRepository;
 
     public List<RegistrationDto> getAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
@@ -166,6 +170,38 @@ public class RegistrationService {
                 .toList();
     }
 
+    public List<PatientScheduleItemDto> getMySchedule(
+            String email,
+            LocalDate date,
+            LocalDate from,
+            LocalDate to
+    ) {
+        Stay stay = findActiveStayByEmail(email);
+        if (stay == null) {
+            return List.of();
+        }
+
+        return getScheduleForStayId(stay.getId(), date, from, to);
+    }
+
+    public List<PatientScheduleItemDto> getScheduleForPatientByDoctor(
+            String doctorEmail,
+            Long patientId,
+            LocalDate date,
+            LocalDate from,
+            LocalDate to
+    ) {
+        User doctorUser = userService.findByEmail(doctorEmail)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + doctorEmail));
+        Doctor doctor = doctorRepository.findByUser_Id(doctorUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Doctor not found for user: " + doctorEmail));
+        Stay stay = findActiveStayByPatientId(patientId);
+        if (stay.getDoctorId() == null || !stay.getDoctorId().equals(doctor.getId())) {
+            throw new IllegalArgumentException("Врач не является лечащим для данного пациента");
+        }
+        return getScheduleForStayId(stay.getId(), date, from, to);
+    }
+
     private void ensureNotDuplicate(Registration entity) {
         if (entity.getStay() == null || entity.getSession() == null) {
             return;
@@ -180,6 +216,55 @@ public class RegistrationService {
                             + id.getStayId() + ", sessionId=" + id.getSessionId()
             );
         }
+    }
+
+    private boolean filterByDate(Registration registration, LocalDate date, LocalDate from, LocalDate to) {
+        LocalDate sessionDate = registration.getSession().getSessionDate();
+        if (date != null) {
+            return date.equals(sessionDate);
+        }
+        if (from != null && (sessionDate == null || sessionDate.isBefore(from))) {
+            return false;
+        }
+        if (to != null && (sessionDate == null || sessionDate.isAfter(to))) {
+            return false;
+        }
+        return true;
+    }
+
+    private PatientScheduleItemDto toScheduleItem(Registration registration) {
+        Session session = registration.getSession();
+        com.example.models.Procedure procedure = session.getProcedure();
+        return new PatientScheduleItemDto(
+                session.getId(),
+                session.getSessionDate(),
+                session.getTimeStart(),
+                procedure == null ? null : procedure.getId(),
+                procedure == null ? null : procedure.getName(),
+                registration.getIsNecessary()
+        );
+    }
+
+    private Comparator<PatientScheduleItemDto> scheduleComparator() {
+        return Comparator
+                .comparing(PatientScheduleItemDto::getSessionDate,
+                        Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(PatientScheduleItemDto::getTimeStart,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+    }
+
+    private List<PatientScheduleItemDto> getScheduleForStayId(
+            Long stayId,
+            LocalDate date,
+            LocalDate from,
+            LocalDate to
+    ) {
+        List<Registration> registrations = repository.findWithSessionAndProcedureByStayId(stayId);
+        return registrations.stream()
+                .filter(r -> filterByDate(r, date, from, to))
+                .map(this::toScheduleItem)
+                .sorted(scheduleComparator())
+                .toList();
     }
 
     private Stay getStayOrThrow(Stay stay) {
@@ -244,6 +329,16 @@ public class RegistrationService {
         }
 
         return stay;
+    }
+
+    private Stay findActiveStayByPatientId(Long patientId) {
+        LocalDate today = LocalDate.now();
+        StayRequest stayRequest = stayRequestRepository.findActiveStayRequestByPatientId(patientId, today)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Active stay request not found for patient: " + patientId));
+        return stayRepository.findByStayRequestId(stayRequest.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Stay not found for stay request: " + stayRequest.getId()));
     }
 
 }
