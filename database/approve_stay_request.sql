@@ -50,6 +50,10 @@ INSERT INTO Stay (stay_request_id, room_id, doctor_id)
 VALUES (p_request_id, p_room_id, p_doctor_id)
     RETURNING id INTO v_stay_id;
 
+UPDATE Room
+SET is_occupied = TRUE
+WHERE id = p_room_id;
+
 RETURN v_stay_id;
 END;
 $$ LANGUAGE plpgsql;

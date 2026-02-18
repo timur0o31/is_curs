@@ -2,17 +2,21 @@ package com.example.controllers;
 
 import com.example.dto.*;
 import com.example.models.Diet;
+import com.example.models.Doctor;
 import com.example.security.UserDetailsImpl;
 import com.example.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/doctor")
@@ -26,21 +30,28 @@ public class DoctorController {
     private final SessionService sessionService;
     private final DoctorService doctorService;
     private final StayService stayService;
-    @GetMapping("/dashboard")
-    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public ResponseEntity<Boolean> getDoctorDashboard(@AuthenticationPrincipal UserDetailsImpl user) {
-        return ResponseEntity.ok(doctorService.getWorking(user.getId()));
-    }
+
+//    @GetMapping("/dashboard")
+//    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+//    public ResponseEntity<Boolean> getDoctorDashboard(@AuthenticationPrincipal UserDetailsImpl user) {
+//        return ResponseEntity.ok(doctorService.getWorking(user.getId()));
+//    }
 
     @GetMapping("/patients")
     @PreAuthorize("hasAuthority('patient:read')")
     public ResponseEntity<String> getPatients() {
         return ResponseEntity.ok("Список пациентов врача");
     }
-    @GetMapping("/active-patients")
-    @PreAuthorize("hasRole('DOCTOR')")
-    public ResponseEntity<List<ActivePatientDto>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
-        return ResponseEntity.ok(stayService.getPatientsByDoctorId(user.getId()));
+//    @GetMapping("/active-patients")
+//    @PreAuthorize("hasRole('DOCTOR')")
+//    public ResponseEntity<List<String>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
+//        return ResponseEntity.ok(stayService.getPatientsByDoctorId(user.getId()));
+//    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<DoctorDto>> getAllWorkingDoctors() {
+        return ResponseEntity.ok(doctorService.getAllWorkingDoctors());
     }
 
     /**
@@ -49,10 +60,8 @@ public class DoctorController {
      */
     @GetMapping("/medical-cards/{patientId}")
     @PreAuthorize("hasAuthority('medical_card:read')")
-    public ResponseEntity<MedicalCardDto> getMedicalCard(
-            @AuthenticationPrincipal UserDetailsImpl user,
-            @PathVariable Long patientId) {
-        MedicalCardDto card = medicalCardService.getByPatientIdForDoctorUser(patientId, user.getId());
+    public ResponseEntity<MedicalCardDto> getMedicalCard(@PathVariable Long patientId) {
+        MedicalCardDto card = medicalCardService.getByPatientId(patientId);
         return ResponseEntity.ok(card);
     }
 
@@ -97,16 +106,16 @@ public class DoctorController {
      * UC-19: Управление расписанием консультаций.
      * Врач указывает свободные слоты, система публикует их для пациентов.
      */
-    @PostMapping("/consultations")
-    @PreAuthorize("hasAuthority('session:write')")
-    public ResponseEntity<List<SessionDto>> createConsultationSlots(
-            @RequestBody List<ConsultationSlotRequest> slots) {
-        List<SessionDto> created = slots.stream()
-                .map(slot -> sessionService.create(
-                        new SessionDto(null, null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
-                .toList();
-        return ResponseEntity.ok(created);
-    }
+//    @PostMapping("/consultations")
+//    @PreAuthorize("hasAuthority('session:write')")
+//    public ResponseEntity<List<SessionDto>> createConsultationSlots(
+//            @RequestBody List<ConsultationSlotRequest> slots) {
+//        List<SessionDto> created = slots.stream()
+//                .map(slot -> sessionService.create(
+//                        new SessionDto(null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
+//                .toList();
+//        return ResponseEntity.ok(created);
+//    }
 
     /**
      * UC-18: Назначение лекарств.

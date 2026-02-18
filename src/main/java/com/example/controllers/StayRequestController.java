@@ -56,6 +56,7 @@ public class StayRequestController {
                 service.createCheckInRequest(auth.getName(), dto.getAdmissionDate(), dto.getDischargeDate())
         );
     }
+
     @PostMapping("/expansion")
     @PreAuthorize("hasAuthority('stay_request:write')")
     public ResponseEntity<StayRequestDto> createExpansion(Authentication auth,@RequestBody StayRequestDto dto) {
@@ -63,6 +64,7 @@ public class StayRequestController {
                 service.createExpansionRequest(auth.getName(), dto.getAdmissionDate(), dto.getDischargeDate())
         );
     }
+
     @PostMapping("/{id}/approve")
     @PreAuthorize("hasAuthority('stay_request:approve')")
     public ResponseEntity<Long> approve(@PathVariable Long id, @RequestParam Long roomId, @RequestParam(required = false) Long doctorId) {

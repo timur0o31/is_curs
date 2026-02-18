@@ -3,6 +3,8 @@ package com.example.repositories;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.dto.StayRequestDto;
 import com.example.models.RequestStatus;
 import com.example.models.Stay;
 import com.example.models.StayRequest;
@@ -12,6 +14,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface StayRequestRepository extends JpaRepository<StayRequest, Long> {
+
+    @Query("""
+        SELECT new com.example.dto.StayRequestDto(
+            sr.id,
+            p.id,
+            u.name,
+            sr.status,
+            sr.type,
+            sr.admissionDate,
+            sr.dischargeDate,
+            sr.createdAt,
+            r.roomNumber
+        )
+        FROM StayRequest sr
+        JOIN sr.patient p
+        JOIN p.user u
+        LEFT JOIN Stay s ON s.stayRequest = sr
+        LEFT JOIN s.room r
+    """)
+    List<StayRequestDto> findAllWithRoomNumber();
+
     List<StayRequest> findByPatient_Id(Long patientId);
 
     List<StayRequest> findByStatus(RequestStatus status);

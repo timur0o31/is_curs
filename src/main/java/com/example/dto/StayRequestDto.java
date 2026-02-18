@@ -27,4 +27,6 @@ public class StayRequestDto {
     private LocalDate dischargeDate;
 
     private LocalDateTime createdAt;
+
+    private Integer roomNumber;
 }

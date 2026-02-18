@@ -28,7 +28,8 @@ public class StayRequestService {
     private final DoctorRepository doctorRepository;
 
     public List<StayRequestDto> getAll() {
-        return repository.findAll().stream().map(mapper::toDto).toList();
+        return repository.findAllWithRoomNumber();
+        //return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
     public StayRequestDto getById(Long id) {
@@ -104,14 +105,12 @@ public class StayRequestService {
 
         Long stayId = repository.approveStayRequest(requestId, roomId, doctorId);
 
-        // Уведомляем пациента об одобрении заявки
         Long patientUserId = request.getPatient().getUser().getId();
         notificationService.notifyUser(
                 patientUserId,
                 "Ваша заявка #" + requestId + " была одобрена"
         );
 
-        // Уведомляем врача о новом пациенте, если указан doctorId
         if (doctorId != null) {
             doctorRepository.findById(doctorId).ifPresent(doctor -> {
                 Long doctorUserId = doctor.getUser().getId();
