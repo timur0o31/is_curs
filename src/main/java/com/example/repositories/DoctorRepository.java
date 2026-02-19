@@ -8,5 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findByUser_Id(Long userId);
 
+    List<Doctor> findByWorkingFalse();
+
     List<Doctor> findByWorkingTrue();
 }

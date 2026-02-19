@@ -6,6 +6,7 @@ import com.example.models.Doctor;
 import com.example.security.UserDetailsImpl;
 import com.example.services.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -31,27 +32,48 @@ public class DoctorController {
     private final DoctorService doctorService;
     private final StayService stayService;
 
-//    @GetMapping("/dashboard")
-//    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-//    public ResponseEntity<Boolean> getDoctorDashboard(@AuthenticationPrincipal UserDetailsImpl user) {
-//        return ResponseEntity.ok(doctorService.getWorking(user.getId()));
-//    }
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    public ResponseEntity<Boolean> getDoctorDashboard(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(doctorService.getWorking(user.getId()));
+    }
 
     @GetMapping("/patients")
     @PreAuthorize("hasAuthority('patient:read')")
     public ResponseEntity<String> getPatients() {
         return ResponseEntity.ok("Список пациентов врача");
     }
-//    @GetMapping("/active-patients")
-//    @PreAuthorize("hasRole('DOCTOR')")
-//    public ResponseEntity<List<String>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
-//        return ResponseEntity.ok(stayService.getPatientsByDoctorId(user.getId()));
-//    }
+
+    @GetMapping("/active-patients")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<List<ActivePatientDto>> getActivePatients(@AuthenticationPrincipal UserDetailsImpl user) {
+        return ResponseEntity.ok(stayService.getPatientsByDoctorId(user.getId()));
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteDoctor(@RequestParam Long doctorId) {
+        doctorService.deleteDoctor(doctorId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> aproveDoctor(@RequestParam Long doctorId) {
+        doctorService.setWorking(doctorId, true);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<DoctorDto>> getAllWorkingDoctors() {
         return ResponseEntity.ok(doctorService.getAllWorkingDoctors());
+    }
+
+    @GetMapping("/no-working")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<DoctorDto>> getAllNoWorkingDoctors() {
+        return ResponseEntity.ok(doctorService.getAllNoWorkingDoctors());
     }
 
     /**
@@ -106,16 +128,16 @@ public class DoctorController {
      * UC-19: Управление расписанием консультаций.
      * Врач указывает свободные слоты, система публикует их для пациентов.
      */
-//    @PostMapping("/consultations")
-//    @PreAuthorize("hasAuthority('session:write')")
-//    public ResponseEntity<List<SessionDto>> createConsultationSlots(
-//            @RequestBody List<ConsultationSlotRequest> slots) {
-//        List<SessionDto> created = slots.stream()
-//                .map(slot -> sessionService.create(
-//                        new SessionDto(null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
-//                .toList();
-//        return ResponseEntity.ok(created);
-//    }
+    @PostMapping("/consultations")
+    @PreAuthorize("hasAuthority('session:write')")
+    public ResponseEntity<List<SessionDto>> createConsultationSlots(
+            @RequestBody List<ConsultationSlotRequest> slots) {
+        List<SessionDto> created = slots.stream()
+                .map(slot -> sessionService.create(
+                        new SessionDto(null, null, null, slot.doctorId(), slot.sessionDate(), slot.timeStart())))
+                .toList();
+        return ResponseEntity.ok(created);
+    }
 
     /**
      * UC-18: Назначение лекарств.

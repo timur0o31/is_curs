@@ -25,6 +25,17 @@ public class DoctorService {
                 .collect(Collectors.toList());
     }
 
+    public List<DoctorDto> getAllNoWorkingDoctors() {
+        return doctorRepository.findByWorkingFalse()
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteDoctor(Long id) {
+        doctorRepository.deleteById(id);
+    }
+
     @Transactional
     public Doctor setWorking(Long doctorId, boolean working) {
         Doctor doctor = doctorRepository.findById(doctorId)
